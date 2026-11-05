@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script>
+    // Usamos una clave distinta en localStorage para no pisar el tema del Dojo original
+    if (localStorage.getItem('mathjr_theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Math Dojo Junior 🦊</title>
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --border-color: #334155;
+    }
+    [data-theme="light"] {
+      --bg-primary: #f0fdf4; 
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    
+    body {
+      margin: 0; padding: 0;
+      background-color: var(--bg-primary); color: var(--text-main);
+      font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, -apple-system, sans-serif; 
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+      transition: background-color 0.3s, color 0.3s;
+      padding-bottom: max(2rem, env(safe-area-inset-bottom));
+    }
+
+    .theme-toggle-btn {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: var(--bg-card); border: 2px solid var(--border-color);
+      border-radius: 50px; cursor: pointer; padding: 0.6rem 0.8rem;
+      font-size: 1.4rem; display: inline-flex; color: var(--text-main);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 100;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .theme-toggle-btn:active { transform: scale(0.85); }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: max(3.5rem, env(safe-area-inset-top));
+      margin-bottom: 2rem;
+      padding: 0 1.2rem;
+      max-width: 520px;
+      width: 94%;
+    }
+    
+    .header-icon {
+      font-size: 4.5rem;
+      margin-bottom: 0.5rem;
+      line-height: 1;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .header h1 { 
+      font-size: clamp(2.2rem, 7vw, 3.2rem); 
+      margin: 0; 
+      font-weight: 900; 
+      letter-spacing: -1px; 
+      line-height: 1.1;
+      color: #3b82f6; 
+    }
+    [data-theme="light"] .header h1 { color: #2563eb; }
+    
+    .header p { 
+      color: var(--text-muted); 
+      font-size: clamp(1.1rem, 4vw, 1.3rem); 
+      margin: 0.5rem 0 0 0; 
+      font-weight: 600;
+    }
+    
+    /* REJILLA A DOBLE COLUMNA */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem; 
+      width: 94%;
+      max-width: 520px;
+    }
+    
+    .game-card {
+      background-color: var(--bg-card);
+      border: 3px solid var(--border-color); 
+      border-radius: 24px; 
+      padding: 1.5rem 0.8rem;
+      min-height: 150px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      gap: 0.8rem;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+      color: var(--text-main);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden; 
+    }
+    .game-card:active { 
+      transform: scale(0.92); 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .game-icon {
+      font-size: 3.5rem; 
+      line-height: 1;
+      position: relative;
+      z-index: 2;
+    }
+
+    .game-info {
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    .game-info h2 {
+      margin: 0 0 0.3rem 0;
+      font-size: clamp(1rem, 3.5vw, 1.25rem);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .game-info p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.2;
+      font-weight: 500;
+    }
+
+    /* TARJETA ESPECIAL (ANCHO COMPLETO) */
+    .promo-card {
+      grid-column: 1 / -1; 
+      flex-direction: row; 
+      text-align: left;
+      padding: 1.5rem;
+      background: linear-gradient(145deg, var(--bg-card) 40%, rgba(59, 130, 246, 0.15) 100%);
+      border-color: rgba(59, 130, 246, 0.5);
+      border-radius: 28px;
+      justify-content: flex-start;
+      gap: 1.2rem;
+      margin-top: 1rem; 
+    }
+    .promo-card .game-icon {
+      font-size: 3rem;
+    }
+    .promo-card .game-info p {
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Colores temáticos vivos */
+    .card-calculo { border-color: rgba(245, 158, 11, 0.6); }
+    .card-calculo h2 { color: #f59e0b; }
+    
+    .card-sumas { border-color: rgba(16, 185, 129, 0.6); }
+    .card-sumas h2 { color: #10b981; }
+
+    .card-restas { border-color: rgba(239, 68, 68, 0.6); }
+    .card-restas h2 { color: #ef4444; }
+
+    .card-multi { border-color: rgba(59, 130, 246, 0.6); }
+    .card-multi h2 { color: #3b82f6; }
+
+    .card-div { border-color: rgba(168, 85, 247, 0.6); }
+    .card-div h2 { color: #a855f7; }
+
+    .card-formas { border-color: rgba(236, 72, 153, 0.6); }
+    .card-formas h2 { color: #ec4899; }
+    
+    .card-reloj { border-color: rgba(20, 184, 166, 0.6); }
+    .card-reloj h2 { color: #14b8a6; }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Cambiar tema">
+    <span id="theme-icon">☀️</span>
+  </button>
+
+  <div class="header">
+    <div class="header-icon">🦊</div>
+    <h1>Math Dojo <br>JUNIOR</h1>
+    <p>¡Aprende mates jugando!</p>
+  </div>
+
+  <div class="games-grid">
+    <!-- Cálculo Mental (mental.html) -->
+    <a href="mental.html" class="game-card card-calculo">
+      <div class="game-icon">⚡</div>
+      <div class="game-info">
+        <h2>Rayo Mental</h2>
+        <p>Cálculo rápido</p>
+      </div>
+    </a>
+
+    <!-- Sumas (sumas.html) -->
+    <a href="sumas.html" class="game-card card-sumas">
+      <div class="game-icon">🦸‍♂️</div>
+      <div class="game-info">
+        <h2>Súper Sumas</h2>
+        <p>Con llevadas</p>
+      </div>
+    </a>
+
+    <!-- Restas (restas.html) -->
+    <a href="restas.html" class="game-card card-restas">
+      <div class="game-icon">🦸‍♀️</div>
+      <div class="game-info">
+        <h2>Restas Valientes</h2>
+        <p>Pidiendo prestado</p>
+      </div>
+    </a>
+
+    <!-- Multiplicaciones (multiplicaciones.html) -->
+    <a href="multiplicaciones.html" class="game-card card-multi">
+      <div class="game-icon">✨</div>
+      <div class="game-info">
+        <h2>Magia x Tablas</h2>
+        <p>Multiplicaciones</p>
+      </div>
+    </a>
+
+    <!-- Divisiones (divisiones.html) -->
+    <a href="divisiones.html" class="game-card card-div">
+      <div class="game-icon">🍕</div>
+      <div class="game-info">
+        <h2>Reparte Justo</h2>
+        <p>Halla el cociente</p>
+      </div>
+    </a>
+
+    <!-- Formas geométricas (geometria.html) -->
+    <a href="geometria.html" class="game-card card-formas">
+      <div class="game-icon">🔺</div>
+      <div class="game-info">
+        <h2>Explorador</h2>
+        <p>Formas 2D y 3D</p>
+      </div>
+    </a>
+
+    <!-- El Reloj / Tiempo (reloj.html) - Ocupa dos columnas al ser impar -->
+    <a href="reloj.html" class="game-card card-reloj" style="grid-column: 1 / -1;">
+      <div class="game-icon">⏰</div>
+      <div class="game-info">
+        <h2>El Reloj Mágico</h2>
+        <p>Aprende las horas</p>
+      </div>
+    </a>
+
+    <!-- Tarjeta Promo al Dojo original para los mayores -->
+    <a href="https://ruta-a-tu-math-dojo-original.com" target="_blank" rel="noopener noreferrer" class="game-card promo-card">
+      <div class="game-icon">⛩️</div>
+      <div class="game-info">
+        <h2 style="color: #3b82f6;">¿Eres mayor?</h2>
+        <p>Visita el <b>Math Dojo</b> para entrenar álgebra, ecuaciones y mucho más.</p>
+      </div>
+    </a>
+  </div>
+
+  <script>
+    function initTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
+    }
+    
+    function toggleTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('mathjr_theme', 'dark');
+        document.getElementById('theme-icon').textContent = '☀️';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('mathjr_theme', 'light');
+        document.getElementById('theme-icon').textContent = '🌙';
+      }
+    }
+    
+    window.addEventListener('DOMContentLoaded', initTheme);
+  </script>
+</body>
+</html>

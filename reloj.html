@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script>
+    if (localStorage.getItem('mathjr_theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>El Reloj Mágico | Math Dojo Junior</title>
+  <meta name="theme-color" content="#0f172a">
+  
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --border-color: #334155;
+      
+      --belt-blanco: #f8fafc;
+      --belt-naranja: #f97316;
+      --belt-azul: #3b82f6;
+      --belt-negro: #0f172a;
+      
+      --accent-success: #10b981;
+      --accent-error: #f43f5e;
+    }
+    
+    [data-theme="light"] {
+      --bg-primary: #f0fdf4; 
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --belt-negro: #1e293b;
+    }
+    
+    * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
+    
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; min-height: 100vh;
+      background-color: var(--bg-primary); color: var(--text-main);
+      display: flex; flex-direction: column; align-items: center;
+      transition: background-color 0.3s, color 0.3s;
+      overflow-x: hidden;
+      touch-action: pan-y;
+    }
+
+    /* EFECTOS DEL DOJO */
+    @keyframes screenFlash {
+      0% { box-shadow: inset 0 0 120px rgba(16, 185, 129, 0.5); }
+      100% { box-shadow: inset 0 0 0px rgba(16, 185, 129, 0); }
+    }
+    body.flash-active { animation: screenFlash 0.6s ease-out; }
+
+    @keyframes errorFlash {
+      0% { box-shadow: inset 0 0 150px rgba(244, 63, 94, 0.6); }
+      100% { box-shadow: inset 0 0 0px rgba(244, 63, 94, 0); }
+    }
+    body.error-active { animation: errorFlash 0.5s ease-out; }
+
+    .particle {
+      position: fixed; pointer-events: none; font-size: 2.5rem;
+      opacity: 1; z-index: 999;
+      transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease-out;
+    }
+
+    /* BARRA SUPERIOR */
+    .top-nav {
+      width: 100%; max-width: 800px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem; z-index: 10;
+    }
+    
+    .btn-nav {
+      background: var(--bg-card); border: 2px solid var(--border-color);
+      border-radius: 50px; cursor: pointer; padding: 0.6rem 1rem;
+      font-size: 1.2rem; color: var(--text-main);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-decoration: none; font-weight: bold;
+      transition: transform 0.15s;
+    }
+    .btn-nav:active { transform: scale(0.9); }
+
+    .header { text-align: center; margin-bottom: 1.5rem; z-index: 10; }
+    .header h1 { font-size: clamp(2rem, 6vw, 2.5rem); margin: 0; color: #14b8a6; } 
+    .header p { color: var(--text-muted); margin: 0.5rem 0 0 0; font-size: 1.1rem; }
+
+    /* SELECTOR DE CINTURONES */
+    .level-selector {
+      width: 90%; max-width: 400px;
+      display: flex; flex-direction: column; gap: 1rem;
+      margin-bottom: 2rem; z-index: 10;
+    }
+    .belt-btn {
+      width: 100%; padding: 1.2rem; border-radius: 20px; border: 4px solid;
+      font-size: 1.3rem; font-weight: 800; cursor: pointer;
+      background: var(--bg-card); color: var(--text-main);
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    .belt-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    
+    .belt-btn[data-level="blanco"] { border-color: #cbd5e1; }
+    .belt-btn[data-level="naranja"] { border-color: var(--belt-naranja); }
+    .belt-btn[data-level="azul"] { border-color: var(--belt-azul); }
+    .belt-btn[data-level="negro"] { border-color: var(--belt-negro); }
+    
+    .belt-text { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; }
+    .belt-desc { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-top: 0.3rem; }
+
+    /* ÁREA DEL JUEGO */
+    .game-area {
+      display: none; width: 96%; max-width: 800px; 
+      flex-direction: column; align-items: center; z-index: 10;
+    }
+    .game-area.active { display: flex; }
+
+    .game-header {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem; padding: 0 1rem;
+    }
+    .change-level-btn {
+      background: none; border: none; color: var(--belt-naranja);
+      font-weight: bold; font-size: 1rem; cursor: pointer; text-decoration: underline; padding: 0;
+    }
+    .score-board { font-size: 1.3rem; font-weight: bold; color: var(--text-muted); display: flex; gap: 1rem; }
+
+    .game-layout {
+      width: 100%; background: var(--bg-card); border: 3px solid var(--border-color);
+      border-radius: 24px; padding: 1.5rem 1rem; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      display: flex; flex-direction: column; gap: 1.5rem; align-items: center;
+    }
+
+    /* SECCIÓN DEL PROBLEMA (RELOJ) */
+    .problem-section {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      flex: 1; width: 100%;
+    }
+
+    .clock-container {
+      width: 100%; max-width: 250px; aspect-ratio: 1;
+      position: relative; margin-bottom: 1rem;
+      border-radius: 50%; background: var(--bg-primary);
+      border: 6px solid var(--border-color);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      touch-action: none;
+    }
+    
+    [data-theme="light"] .clock-container { border-color: #94a3b8; background: #fff; }
+
+    .clock-svg {
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    
+    .clock-interactive .clock-svg { pointer-events: auto; }
+
+    /* Agujas */
+    .hand-hour { stroke: #f43f5e; stroke-width: 5; stroke-linecap: round; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .hand-minute { stroke: #3b82f6; stroke-width: 4; stroke-linecap: round; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    .dragging .hand-hour, .dragging .hand-minute { transition: none; }
+
+    .hitbox { stroke: transparent; stroke-width: 20; stroke-linecap: round; cursor: pointer; pointer-events: auto; }
+
+    /* DISPLAY DE TEXTO */
+    .target-time-text {
+      font-size: 1.6rem; font-weight: 900; color: var(--text-main);
+      margin-bottom: 1rem; text-align: center;
+    }
+
+    /* DIGITAL INPUT */
+    .digital-input-container {
+      display: flex; align-items: center; gap: 0.5rem; display: none;
+    }
+    .digital-box {
+      width: 70px; height: 70px; font-size: 2.5rem; font-weight: bold; text-align: center;
+      border-radius: 12px; border: 4px solid var(--border-color);
+      background: var(--bg-primary); color: var(--text-main);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .digital-box.focus { border-color: #14b8a6; box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.3); }
+    .digital-colon { font-size: 3rem; font-weight: bold; color: var(--text-main); padding-bottom: 0.5rem; }
+
+    /* TECLADO VIRTUAL */
+    .keypad {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem;
+      width: 100%; max-width: 320px; display: none;
+    }
+    .key-btn {
+      background: var(--bg-primary); border: 2px solid var(--border-color);
+      border-radius: 16px; font-size: 1.8rem; font-weight: bold; color: var(--text-main);
+      padding: 0.8rem 0; cursor: pointer; box-shadow: 0 5px 0 var(--border-color); transition: transform 0.1s;
+    }
+    .key-btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--border-color); }
+    .key-action { background: #ef4444; color: white; border-color: #b91c1c; box-shadow: 0 5px 0 #b91c1c; font-size: 1.2rem;}
+    .key-ok { grid-column: span 2; background: #14b8a6; color: white; border-color: #0d9488; box-shadow: 0 5px 0 #0d9488; font-size: 1.5rem;}
+    
+    /* MULTIRESPUESTA (Negro) */
+    .options-grid { display: grid; grid-template-columns: 1fr; gap: 0.8rem; width: 100%; max-width: 350px; display: none; }
+    .option-btn {
+      background: var(--bg-card); border: 3px solid var(--border-color);
+      border-radius: 16px; font-size: 1.2rem; font-weight: bold; color: var(--text-main);
+      padding: 1rem 0.5rem; cursor: pointer; box-shadow: 0 5px 0 var(--border-color);
+      transition: transform 0.1s, border-color 0.2s;
+    }
+    .option-btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--border-color); }
+    .option-btn.correct-show { border-color: var(--accent-success); background: rgba(16, 185, 129, 0.15); color: var(--accent-success); }
+    .option-btn.wrong-show { border-color: var(--accent-error); background: rgba(244, 63, 94, 0.15); color: var(--accent-error); }
+
+    /* BOTON COMPROBAR GRANDE */
+    .btn-comprobar-huge {
+      background: #3b82f6; color: white; border: none; border-radius: 50px;
+      padding: 1.2rem 2.5rem; font-size: 1.5rem; font-weight: bold; cursor: pointer;
+      box-shadow: 0 6px 0 #2563eb; width: 100%; max-width: 300px; display: none; margin-top: 1rem;
+    }
+    .btn-comprobar-huge:active { transform: translateY(6px); box-shadow: 0 0 0 #2563eb; }
+
+    .feedback { height: 2rem; font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; width: 100%; margin-top: 0.5rem;}
+    .feedback.correct { color: var(--accent-success); }
+    .feedback.wrong { color: var(--accent-error); }
+
+    @media (min-width: 650px) {
+      .game-layout { flex-direction: row; justify-content: space-around; padding: 2rem; }
+      .problem-section { flex: 1; border-right: 3px dashed var(--border-color); padding-right: 1.5rem; }
+      .keypad, .options-grid { flex: 0.8; max-width: 280px; }
+      .header h1 { font-size: 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-nav">
+    <a href="index.html" class="btn-nav">⬅️ Inicio</a>
+    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema">
+      <span id="theme-icon">☀️</span>
+    </button>
+  </div>
+
+  <div class="header">
+    <h1>⏰ El Reloj Mágico</h1>
+    <p>Aprende a leer el tiempo</p>
+  </div>
+
+  <div class="level-selector" id="level-selector">
+    <button class="belt-btn" data-level="blanco">
+      <span class="belt-text">Cinturón Blanco <span class="belt-desc">Solo horas en punto</span></span>
+    </button>
+    <button class="belt-btn" data-level="naranja">
+      <span class="belt-text">Cinturón Naranja <span class="belt-desc">Horas y minutos (de 5 en 5)</span></span>
+    </button>
+    <button class="belt-btn" data-level="azul">
+      <span class="belt-text">Cinturón Azul <span class="belt-desc">Toca y mueve las agujas 🖐️</span></span>
+    </button>
+    <button class="belt-btn" data-level="negro">
+      <span class="belt-text">Cinturón Negro <span class="belt-desc">Quarts (En català)</span></span>
+    </button>
+  </div>
+
+  <div class="game-area" id="game-area">
+    <div class="game-header">
+      <button class="change-level-btn" onclick="showLevelSelector()">🔄 Cambiar cinturón</button>
+      <div class="score-board"><span>✅ <span id="score">0</span></span><span>🔥 <span id="streak">0</span></span></div>
+    </div>
+    
+    <div class="game-layout">
+      <div class="problem-section">
+        
+        <div class="target-time-text" id="target-time-text"></div>
+        
+        <div class="clock-container" id="clock-container">
+          <svg class="clock-svg" viewBox="0 0 100 100">
+            <!-- Marcas de hora -->
+            <g id="clock-ticks"></g>
+            <!-- Agujas -->
+            <line id="hand-hour" class="hand-hour" x1="50" y1="50" x2="50" y2="28" />
+            <line id="hand-minute" class="hand-minute" x1="50" y1="50" x2="50" y2="15" />
+            <!-- Hitboxes -->
+            <line id="hitbox-hour" class="hitbox" x1="50" y1="50" x2="50" y2="28" />
+            <line id="hitbox-minute" class="hitbox" x1="50" y1="50" x2="50" y2="15" />
+            
+            <circle cx="50" cy="50" r="3" fill="#cbd5e1" />
+          </svg>
+        </div>
+
+        <div class="digital-input-container" id="digital-input">
+          <div class="digital-box focus" id="box-hh" data-id="hh" onclick="setFocus(this)"></div>
+          <div class="digital-colon">:</div>
+          <div class="digital-box" id="box-mm" data-id="mm" onclick="setFocus(this)"></div>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+      </div>
+      
+      <!-- CONTROLES -->
+      <div class="keypad" id="keypad">
+        <button class="key-btn" onclick="pressKey('1')">1</button>
+        <button class="key-btn" onclick="pressKey('2')">2</button>
+        <button class="key-btn" onclick="pressKey('3')">3</button>
+        <button class="key-btn" onclick="pressKey('4')">4</button>
+        <button class="key-btn" onclick="pressKey('5')">5</button>
+        <button class="key-btn" onclick="pressKey('6')">6</button>
+        <button class="key-btn" onclick="pressKey('7')">7</button>
+        <button class="key-btn" onclick="pressKey('8')">8</button>
+        <button class="key-btn" onclick="pressKey('9')">9</button>
+        <button class="key-btn key-action" onclick="clearInput()">Borrar</button>
+        <button class="key-btn" onclick="pressKey('0')">0</button>
+        <button class="key-btn key-ok" onclick="checkAnswer()">OK</button>
+      </div>
+
+      <div class="options-grid" id="options-grid">
+        <button class="option-btn" onclick="checkCatalanAnswer(0)">Op 1</button>
+        <button class="option-btn" onclick="checkCatalanAnswer(1)">Op 2</button>
+        <button class="option-btn" onclick="checkCatalanAnswer(2)">Op 3</button>
+        <button class="option-btn" onclick="checkCatalanAnswer(3)">Op 4</button>
+      </div>
+
+      <button class="btn-comprobar-huge" id="btn-comprobar-azul" onclick="checkAnswer()">¡Comprobar Reloj!</button>
+
+    </div>
+  </div>
+
+  <script>
+    const clockSvg = document.querySelector('.clock-svg');
+    const handH = document.getElementById('hand-hour');
+    const handM = document.getElementById('hand-minute');
+    const hitboxH = document.getElementById('hitbox-hour');
+    const hitboxM = document.getElementById('hitbox-minute');
+    const ticksGroup = document.getElementById('clock-ticks');
+    
+    const targetTextEl = document.getElementById('target-time-text');
+    const digitalInputContainer = document.getElementById('digital-input');
+    const keypad = document.getElementById('keypad');
+    const optionsGrid = document.getElementById('options-grid');
+    const btnAzul = document.getElementById('btn-comprobar-azul');
+    const boxHH = document.getElementById('box-hh');
+    const boxMM = document.getElementById('box-mm');
+    const feedbackEl = document.getElementById('feedback');
+    const scoreEl = document.getElementById('score');    
+    const streakEl = document.getElementById('streak');  
+    
+    let currentLevel = '';
+    let targetH = 0, targetM = 0; 
+    let interactiveH = 12, interactiveM = 0; 
+    let score = 0, streak = 0;
+    let isWaiting = false;
+    
+    let focusedInput = null;
+    let inputValues = { hh: '', mm: '' };
+    let correctCatalanIndex = 0;
+
+    // DIBUJAR RELOJ 
+    function drawClock() {
+      ticksGroup.innerHTML = '';
+      for(let i=1; i<=12; i++) {
+        let angle = (i * 30) - 90;
+        let rad = angle * Math.PI / 180;
+        let x = 50 + Math.cos(rad) * 40;
+        let y = 50 + Math.sin(rad) * 40;
+        let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", x);
+        text.setAttribute("y", y + 2.5);
+        text.setAttribute("font-size", "7");
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("fill", "currentColor");
+        text.textContent = i;
+        ticksGroup.appendChild(text);
+      }
+    }
+    drawClock();
+
+    function setClockVisuals(h, m) {
+      let mAngle = m * 6; 
+      let hAngle = (h % 12) * 30 + (m * 0.5); 
+      
+      let transformM = `rotate(${mAngle} 50 50)`;
+      let transformH = `rotate(${hAngle} 50 50)`;
+      
+      handM.setAttribute('transform', transformM);
+      hitboxM.setAttribute('transform', transformM);
+      
+      handH.setAttribute('transform', transformH);
+      hitboxH.setAttribute('transform', transformH);
+    }
+
+    // --- LÓGICA ARRASTRE ---
+    let activeHand = null;
+    
+    function startDrag(e) {
+      if(currentLevel !== 'azul' || isWaiting) return;
+      e.preventDefault();
+      if(e.target.id === 'hitbox-hour') activeHand = 'hour';
+      else if(e.target.id === 'hitbox-minute') activeHand = 'minute';
+      if(activeHand) clockSvg.classList.add('dragging');
+    }
+
+    function doDrag(e) {
+      if(!activeHand) return;
+      e.preventDefault();
+      
+      let clientX, clientY;
+      if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+      else { clientX = e.clientX; clientY = e.clientY; }
+
+      const rect = clockSvg.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      
+      let angle = Math.atan2(clientY - cy, clientX - cx) * 180 / Math.PI;
+      angle = (angle + 90 + 360) % 360; 
+      
+      if(activeHand === 'minute') {
+        interactiveM = Math.round(angle / 30) * 5;
+        if(interactiveM === 60) interactiveM = 0;
+      } else if (activeHand === 'hour') {
+        let snappedH = Math.round(angle / 30);
+        if(snappedH === 0) snappedH = 12;
+        interactiveH = snappedH;
+      }
+      setClockVisuals(interactiveH, interactiveM);
+    }
+
+    function endDrag(e) {
+      activeHand = null;
+      clockSvg.classList.remove('dragging');
+    }
+
+    clockSvg.addEventListener('mousedown', startDrag);
+    clockSvg.addEventListener('touchstart', startDrag, {passive: false});
+    window.addEventListener('mousemove', doDrag);
+    window.addEventListener('touchmove', doDrag, {passive: false});
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('touchend', endDrag);
+
+
+    // --- GENERADOR CATALÁN ---
+    function getCatalanTime(h, m) {
+      const hNames = { 1:'una', 2:'dues', 3:'tres', 4:'quatre', 5:'cinc', 6:'sis', 7:'set', 8:'vuit', 9:'nou', 10:'deu', 11:'onze', 12:'dotze' };
+      
+      let nextH = (h % 12) + 1;
+      let nextName = hNames[nextH];
+      let currName = hNames[h === 0 ? 12 : h];
+      
+      let articleNext = (nextH === 1) ? "d'una" : (nextH === 11) ? "d'onze" : "de " + nextName;
+      let articleCurr = (h === 1) ? "la " : "les ";
+      if(h === 1) currName = "una";
+      if(h === 11) articleCurr = "les ";
+
+      if (m === 0) return `${articleCurr}${currName} en punt`;
+      if (m === 15) return `Un quart ${articleNext}`;
+      if (m === 30) return `Dos quarts ${articleNext}`;
+      if (m === 45) return `Tres quarts ${articleNext}`;
+      
+      return `${currName} i ${m}`; 
+    }
+
+
+    // --- GESTIÓN NIVELES ---
+    function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+    function showLevelSelector() {
+      document.getElementById('game-area').classList.remove('active');
+      document.getElementById('level-selector').style.display = 'flex';
+      document.querySelector('.header').style.display = 'block';
+    }
+
+    document.querySelectorAll('.belt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentLevel = btn.dataset.level;
+        document.getElementById('level-selector').style.display = 'none';
+        document.querySelector('.header').style.display = 'none';
+        document.getElementById('game-area').classList.add('active');
+        
+        score = 0; streak = 0; updateScore();
+        generateProblem();
+      });
+    });
+
+    function generateProblem() {
+      isWaiting = false;
+      feedbackEl.textContent = '';
+      
+      targetTextEl.style.display = 'none';
+      digitalInputContainer.style.display = 'none';
+      keypad.style.display = 'none';
+      optionsGrid.style.display = 'none';
+      btnAzul.style.display = 'none';
+      document.getElementById('clock-container').classList.remove('clock-interactive');
+      
+      inputValues = { hh: '', mm: '' };
+      boxHH.textContent = ''; boxMM.textContent = '';
+      
+      if(currentLevel === 'blanco') {
+        targetH = randomInt(1, 12);
+        targetM = 0;
+        setClockVisuals(targetH, targetM);
+        
+        digitalInputContainer.style.display = 'flex';
+        keypad.style.display = 'grid';
+        boxMM.textContent = '00';
+        setFocus(boxHH);
+      }
+      else if(currentLevel === 'naranja') {
+        targetH = randomInt(1, 12);
+        targetM = randomInt(0, 11) * 5; 
+        setClockVisuals(targetH, targetM);
+        
+        digitalInputContainer.style.display = 'flex';
+        keypad.style.display = 'grid';
+        setFocus(boxHH);
+      }
+      else if(currentLevel === 'azul') {
+        targetH = randomInt(1, 12);
+        targetM = randomInt(0, 11) * 5;
+        
+        interactiveH = 12; interactiveM = 0;
+        setClockVisuals(12, 0);
+        document.getElementById('clock-container').classList.add('clock-interactive');
+        
+        targetTextEl.style.display = 'block';
+        targetTextEl.textContent = `Pon las: ${String(targetH).padStart(2, '0')}:${String(targetM).padStart(2, '0')}`;
+        btnAzul.style.display = 'block';
+      }
+      else if(currentLevel === 'negro') {
+        targetH = randomInt(1, 12);
+        targetM = [0, 15, 30, 45][randomInt(0, 3)];
+        setClockVisuals(targetH, targetM);
+        
+        let correctText = getCatalanTime(targetH, targetM);
+        let answers = [correctText];
+        
+        while(answers.length < 4) {
+          let wrongH = randomInt(1, 12);
+          let wrongM = [0, 15, 30, 45][randomInt(0, 3)];
+          let wrongTxt = getCatalanTime(wrongH, wrongM);
+          if(!answers.includes(wrongTxt)) answers.push(wrongTxt);
+        }
+        
+        answers.sort(() => Math.random() - 0.5);
+        correctCatalanIndex = answers.indexOf(correctText);
+        
+        const btns = Array.from(optionsGrid.children);
+        btns.forEach((b, i) => {
+          b.textContent = answers[i];
+          b.className = 'option-btn';
+        });
+        optionsGrid.style.display = 'grid';
+      }
+    }
+
+    // --- TECLADO PARA BLANCO Y NARANJA ---
+    window.setFocus = function(element) {
+      if(isWaiting || currentLevel === 'blanco' && element.id === 'box-mm') return;
+      if(focusedInput) focusedInput.classList.remove('focus');
+      focusedInput = element;
+      focusedInput.classList.add('focus');
+    };
+
+    function pressKey(num) {
+      if (isWaiting || !focusedInput) return;
+      let id = focusedInput.dataset.id;
+      
+      if (inputValues[id].length < 2) {
+        inputValues[id] += num;
+        focusedInput.textContent = inputValues[id];
+        
+        if (id === 'hh' && inputValues.hh.length === 2 && currentLevel === 'naranja') {
+          setFocus(boxMM);
+        }
+      }
+    }
+    
+    function clearInput() {
+      if (isWaiting || !focusedInput) return;
+      let id = focusedInput.dataset.id;
+      inputValues[id] = '';
+      focusedInput.textContent = '';
+      if(id === 'mm' && currentLevel === 'naranja') setFocus(boxHH); 
+    }
+
+    // --- COMPROBACIONES ---
+    function checkCatalanAnswer(index) {
+      if(isWaiting) return;
+      isWaiting = true;
+      const btns = Array.from(optionsGrid.children);
+      
+      if(index === correctCatalanIndex) {
+        successEffect();
+        btns[index].classList.add('correct-show');
+        setTimeout(generateProblem, 1500);
+      } else {
+        failEffect();
+        btns[index].classList.add('wrong-show');
+        btns[correctCatalanIndex].classList.add('correct-show');
+        setTimeout(generateProblem, 2500);
+      }
+    }
+
+    function checkAnswer() {
+      if(isWaiting) return;
+      isWaiting = true;
+      let isCorrect = false;
+
+      if(currentLevel === 'blanco') {
+        isCorrect = parseInt(inputValues.hh) === targetH || parseInt(inputValues.hh) === (targetH%12);
+      }
+      else if(currentLevel === 'naranja') {
+        let uH = parseInt(inputValues.hh);
+        let uM = parseInt(inputValues.mm);
+        if ((uH === targetH || uH === (targetH%12===0?12:targetH%12)) && uM === targetM) isCorrect = true;
+      }
+      else if(currentLevel === 'azul') {
+        if ((interactiveH === targetH || interactiveH === (targetH%12===0?12:targetH%12)) && interactiveM === targetM) isCorrect = true;
+      }
+
+      if(isCorrect) {
+        successEffect();
+        setTimeout(generateProblem, 1500);
+      } else {
+        failEffect();
+        if(currentLevel === 'azul') {
+           feedbackEl.textContent = `¡Ups! Era así:`;
+           setClockVisuals(targetH, targetM); 
+        }
+        setTimeout(() => {
+          generateProblem(); // Ahora avanza en todos los niveles
+        }, 2500);
+      }
+    }
+
+    // --- EFECTOS GAME FEEL ---
+    function createExplosion(x, y) {
+      const emojis = ['✨', '⭐', '⏰', '🎉'];
+      for (let i = 0; i < 10; i++) {
+        let p = document.createElement('div');
+        p.className = 'particle'; p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        p.style.left = x + 'px'; p.style.top = y + 'px';
+        document.body.appendChild(p);
+
+        let angle = Math.random() * Math.PI * 2; let vel = 60 + Math.random() * 100;
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          p.style.transform = `translate(${Math.cos(angle)*vel}px, ${Math.sin(angle)*vel}px) rotate(${Math.random()*360}deg) scale(${Math.random()*0.8+0.5})`;
+          p.style.opacity = '0';
+        }));
+        setTimeout(() => p.remove(), 800);
+      }
+    }
+
+    function successEffect() {
+      score++; streak++; updateScore();
+      feedbackEl.textContent = '¡A tiempo! ⏰'; feedbackEl.className = 'feedback correct';
+      document.body.classList.add('flash-active');
+      const rect = document.getElementById('clock-container').getBoundingClientRect();
+      createExplosion(rect.left + rect.width/2, rect.top + rect.height/2);
+      setTimeout(() => document.body.classList.remove('flash-active'), 600);
+    }
+
+    function failEffect() {
+      streak = 0; updateScore();
+      feedbackEl.textContent = '¡Reloj roto! 💥'; feedbackEl.className = 'feedback wrong';
+      document.body.classList.add('error-active');
+      setTimeout(() => document.body.classList.remove('error-active'), 500);
+    }
+
+    function updateScore() { scoreEl.textContent = score; streakEl.textContent = streak; }
+
+    function initTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
+    }
+    function toggleTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('mathjr_theme', 'dark');
+        document.getElementById('theme-icon').textContent = '☀️';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('mathjr_theme', 'light');
+        document.getElementById('theme-icon').textContent = '🌙';
+      }
+    }
+    window.addEventListener('DOMContentLoaded', initTheme);
+  </script>
+</body>
+</html>

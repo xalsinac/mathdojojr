@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script>
+    if (localStorage.getItem('mathjr_theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Explorador de Formas | Math Dojo Junior</title>
+  <meta name="theme-color" content="#0f172a">
+  
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --border-color: #334155;
+      
+      --belt-blanco: #f8fafc;
+      --belt-naranja: #f97316;
+      --belt-azul: #3b82f6;
+      --belt-negro: #0f172a;
+      
+      --accent-success: #10b981;
+      --accent-error: #f43f5e;
+    }
+    
+    [data-theme="light"] {
+      --bg-primary: #f0fdf4; 
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --belt-negro: #1e293b;
+    }
+    
+    * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
+    
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; min-height: 100vh;
+      background-color: var(--bg-primary); color: var(--text-main);
+      display: flex; flex-direction: column; align-items: center;
+      transition: background-color 0.3s, color 0.3s;
+      overflow-x: hidden;
+    }
+
+    /* EFECTOS PANTALLA COMPLETA (Del Dojo Original) */
+    @keyframes screenFlash {
+      0% { box-shadow: inset 0 0 120px rgba(16, 185, 129, 0.5); }
+      100% { box-shadow: inset 0 0 0px rgba(16, 185, 129, 0); }
+    }
+    body.flash-active { animation: screenFlash 0.6s ease-out; }
+
+    @keyframes errorFlash {
+      0% { box-shadow: inset 0 0 150px rgba(244, 63, 94, 0.6); }
+      100% { box-shadow: inset 0 0 0px rgba(244, 63, 94, 0); }
+    }
+    body.error-active { animation: errorFlash 0.5s ease-out; }
+
+    /* PARTÍCULAS */
+    .particle {
+      position: fixed; pointer-events: none; font-size: 2.5rem;
+      opacity: 1; z-index: 999;
+      transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease-out;
+    }
+
+    /* BARRA SUPERIOR */
+    .top-nav {
+      width: 100%; max-width: 800px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem;
+      z-index: 10;
+    }
+    
+    .btn-nav {
+      background: var(--bg-card); border: 2px solid var(--border-color);
+      border-radius: 50px; cursor: pointer; padding: 0.6rem 1rem;
+      font-size: 1.2rem; color: var(--text-main);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-decoration: none; font-weight: bold;
+      transition: transform 0.15s;
+    }
+    .btn-nav:active { transform: scale(0.9); }
+
+    .header { text-align: center; margin-bottom: 1.5rem; z-index: 10; }
+    .header h1 { font-size: clamp(2rem, 6vw, 2.5rem); margin: 0; color: #ec4899; } 
+    .header p { color: var(--text-muted); margin: 0.5rem 0 0 0; font-size: 1.1rem; }
+
+    /* SELECTOR DE CINTURONES */
+    .level-selector {
+      width: 90%; max-width: 400px;
+      display: flex; flex-direction: column; gap: 1rem;
+      margin-bottom: 2rem; z-index: 10;
+    }
+    .belt-btn {
+      width: 100%;
+      padding: 1.2rem; border-radius: 20px; border: 4px solid;
+      font-size: 1.3rem; font-weight: 800; cursor: pointer;
+      background: var(--bg-card); color: var(--text-main);
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    .belt-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    
+    .belt-btn[data-level="blanco"] { border-color: #cbd5e1; }
+    .belt-btn[data-level="naranja"] { border-color: var(--belt-naranja); }
+    .belt-btn[data-level="azul"] { border-color: var(--belt-azul); }
+    .belt-btn[data-level="negro"] { border-color: var(--belt-negro); }
+    
+    .belt-text { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; }
+    .belt-desc { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-top: 0.3rem; }
+
+    /* ÁREA DEL JUEGO */
+    .game-area {
+      display: none; 
+      width: 96%; max-width: 600px; 
+      flex-direction: column; align-items: center; z-index: 10;
+    }
+    .game-area.active { display: flex; }
+
+    .game-header {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem; padding: 0 1rem;
+    }
+    .change-level-btn {
+      background: none; border: none; color: var(--belt-naranja);
+      font-weight: bold; font-size: 1rem; cursor: pointer; text-decoration: underline; padding: 0;
+    }
+    
+    .score-board {
+      font-size: 1.3rem; font-weight: bold; color: var(--text-muted);
+      display: flex; gap: 1rem;
+    }
+
+    .game-layout {
+      width: 100%;
+      background: var(--bg-card); border: 3px solid var(--border-color);
+      border-radius: 24px; padding: 2rem 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      display: flex; flex-direction: column; gap: 1.5rem; align-items: center;
+    }
+
+    /* VISUALIZADOR GEOMÉTRICO CON EFECTOS POP/SHAKE */
+    .visual-box {
+      width: 100%; max-width: 250px; aspect-ratio: 1;
+      background: var(--bg-primary);
+      border: 4px dashed var(--border-color);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem; position: relative;
+    }
+
+    @keyframes shapePop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.15); border-color: var(--accent-success); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+      100% { transform: scale(1); }
+    }
+    .pop-active { animation: shapePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    @keyframes shapeShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-10px); border-color: var(--accent-error); box-shadow: 0 0 15px rgba(244, 63, 94, 0.3); }
+      40%, 80% { transform: translateX(10px); border-color: var(--accent-error); }
+    }
+    .shake-active { animation: shapeShake 0.4s ease-in-out; }
+
+    .visual-box svg {
+      width: 100%; height: 100%;
+      stroke: var(--text-main); stroke-width: 4;
+      stroke-linecap: round; stroke-linejoin: round; fill: rgba(236, 72, 153, 0.2); 
+    }
+    [data-theme="light"] .visual-box svg { fill: rgba(236, 72, 153, 0.15); }
+    .visual-box svg text { stroke: none; fill: var(--text-main); font-family: inherit; font-weight: bold; }
+    
+    .question-text {
+      font-size: 1.5rem; font-weight: 800; text-align: center;
+      color: var(--text-main); line-height: 1.3;
+    }
+
+    /* BOTONES MULTIRESPUESTA */
+    .options-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; width: 100%;
+    }
+    .option-btn {
+      background: var(--bg-card); border: 3px solid var(--border-color);
+      border-radius: 16px; font-size: 1.15rem; font-weight: bold; color: var(--text-main);
+      padding: 1.2rem 0.5rem; cursor: pointer; box-shadow: 0 5px 0 var(--border-color);
+      transition: transform 0.1s, box-shadow 0.1s, border-color 0.2s; user-select: none;
+    }
+    .option-btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--border-color); }
+    .option-btn.correct-show { border-color: var(--accent-success); background: rgba(16, 185, 129, 0.15); color: var(--accent-success); }
+    .option-btn.wrong-show { border-color: var(--accent-error); background: rgba(244, 63, 94, 0.15); color: var(--accent-error); }
+
+    .feedback {
+      height: 2rem; font-size: 1.5rem; font-weight: bold;
+      display: flex; align-items: center; justify-content: center; text-align: center; width: 100%;
+    }
+    .feedback.correct { color: var(--accent-success); }
+    .feedback.wrong { color: var(--accent-error); }
+  </style>
+</head>
+<body>
+  <div class="top-nav">
+    <a href="index.html" class="btn-nav">⬅️ Inicio</a>
+    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema">
+      <span id="theme-icon">☀️</span>
+    </button>
+  </div>
+
+  <div class="header">
+    <h1>🔺 Explorador</h1>
+    <p>Descubre el mundo de la Geometría</p>
+  </div>
+
+  <div class="level-selector" id="level-selector">
+    <button class="belt-btn" data-level="blanco">
+      <span class="belt-text">Cinturón Blanco <span class="belt-desc">Formas 2D (Todos los polígonos)</span></span>
+    </button>
+    <button class="belt-btn" data-level="naranja">
+      <span class="belt-text">Cinturón Naranja <span class="belt-desc">Tipos de Ángulos y Líneas</span></span>
+    </button>
+    <button class="belt-btn" data-level="azul">
+      <span class="belt-text">Cinturón Azul <span class="belt-desc">Formas 3D (Caras y vértices)</span></span>
+    </button>
+    <button class="belt-btn" data-level="negro">
+      <span class="belt-text">Cinturón Negro <span class="belt-desc">Perímetros y Áreas sencillas</span></span>
+    </button>
+  </div>
+
+  <div class="game-area" id="game-area">
+    <div class="game-header">
+      <button class="change-level-btn" onclick="showLevelSelector()">🔄 Cambiar cinturón</button>
+      <div class="score-board">
+        <span>✅ <span id="score">0</span></span>
+        <span>🔥 <span id="streak">0</span></span>
+      </div>
+    </div>
+    
+    <div class="game-layout">
+      <div class="visual-box" id="visual-box"></div>
+      <div class="question-text" id="question-text">¿Qué forma es esta?</div>
+      
+      <div class="options-grid" id="options-grid">
+        <button class="option-btn" onclick="checkAnswer(0)">Opción 1</button>
+        <button class="option-btn" onclick="checkAnswer(1)">Opción 2</button>
+        <button class="option-btn" onclick="checkAnswer(2)">Opción 3</button>
+        <button class="option-btn" onclick="checkAnswer(3)">Opción 4</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentLevel = '';
+    let correctAnswerIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let isWaiting = false;
+
+    // EFECTO DE PARTÍCULAS
+    function createExplosion(x, y) {
+      const emojis = ['✨', '⭐', '🔺', '🟥', '🎉', '🌟'];
+      const numParticles = 12;
+
+      for (let i = 0; i < numParticles; i++) {
+        let p = document.createElement('div');
+        p.className = 'particle';
+        p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+        document.body.appendChild(p);
+
+        let angle = Math.random() * Math.PI * 2;
+        let velocity = 60 + Math.random() * 100;
+        let tx = Math.cos(angle) * velocity;
+        let ty = Math.sin(angle) * velocity;
+        let rot = Math.random() * 360;
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            p.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(${Math.random() * 0.8 + 0.5})`;
+            p.style.opacity = '0';
+          });
+        });
+        setTimeout(() => p.remove(), 800);
+      }
+    }
+
+    // LIBRERÍA SVG MEJORADA Y AMPLIADA
+    const svgLib = {
+      // 2D (Centrados y optimizados en viewBox 0 0 100 100)
+      cuadrado: '<rect x="20" y="20" width="60" height="60" />',
+      rectangulo: '<rect x="10" y="30" width="80" height="40" />',
+      rombo: '<polygon points="50,10 90,50 50,90 10,50" />',
+      paralelogramo: '<polygon points="30,25 90,25 70,75 10,75" />',
+      trapecio: '<polygon points="30,25 70,25 90,75 10,75" />',
+      triangulo: '<polygon points="50,15 90,80 10,80" />',
+      circulo: '<circle cx="50" cy="50" r="35" />',
+      pentagono: '<polygon points="50,10 90,38 75,85 25,85 10,38" />',
+      hexagono: '<polygon points="50,10 85,30 85,70 50,90 15,70 15,30" />',
+      octogono: '<polygon points="35,10 65,10 90,35 90,65 65,90 35,90 10,65 10,35" />',
+      
+      // Ángulos y Líneas Matemáticamente más precisos
+      agudo: '<path d="M15,80 L80,80 M15,80 L65,25" fill="none" /><path d="M35,80 A20,20 0 0,0 32,61" fill="none" stroke-width="3" stroke="#ec4899" />',
+      recto: '<path d="M20,80 L80,80 M20,80 L20,20" fill="none" /><rect x="20" y="60" width="20" height="20" fill="none" stroke-width="3" stroke="#ec4899" />',
+      obtuso: '<path d="M40,80 L90,80 M40,80 L15,35" fill="none" /><path d="M60,80 A20,20 0 0,0 28,58" fill="none" stroke-width="3" stroke="#ec4899" />',
+      plano: '<path d="M10,50 L90,50" fill="none" /><path d="M70,50 A20,20 0 0,0 30,50" fill="none" stroke-width="3" stroke="#ec4899" /><circle cx="50" cy="50" r="3" fill="var(--text-main)" stroke="none"/>',
+      completo: '<path d="M50,50 L90,50" fill="none" /><circle cx="50" cy="50" r="25" fill="none" stroke-width="3" stroke="#ec4899" /><circle cx="50" cy="50" r="3" fill="var(--text-main)" stroke="none"/>',
+      
+      paralelas: '<line x1="10" y1="35" x2="90" y2="35" /><line x1="10" y1="65" x2="90" y2="65" />',
+      perpendiculares: '<line x1="50" y1="10" x2="50" y2="90" /><line x1="10" y1="50" x2="90" y2="50" />',
+      secantes: '<line x1="20" y1="10" x2="80" y2="90" /><line x1="10" y1="60" x2="90" y2="40" />',
+
+      // 3D Visuales mejorados
+      cubo: '<rect x="25" y="40" width="40" height="40" fill="none"/><polygon points="25,40 45,20 85,20 65,40" fill="rgba(236,72,153,0.3)"/><polygon points="85,20 85,60 65,80 65,40" fill="rgba(236,72,153,0.1)"/>',
+      piramide: '<polygon points="50,15 20,75 80,75" fill="none"/><polygon points="50,15 80,75 95,60" fill="rgba(236,72,153,0.2)"/><line x1="50" y1="15" x2="65" y2="75" />',
+      prisma: '<polygon points="20,20 50,10 80,20 80,70 50,80 20,70" fill="none"/><polygon points="20,20 50,30 80,20" fill="none"/><line x1="50" y1="30" x2="50" y2="80"/>',
+      cilindro: '<ellipse cx="50" cy="25" rx="30" ry="10" fill="rgba(236,72,153,0.3)" /><path d="M20,25 L20,75 A30,10 0 0,0 80,75 L80,25" fill="none" />',
+      cono: '<ellipse cx="50" cy="80" rx="30" ry="10" fill="none" /><path d="M20,80 L50,15 L80,80" fill="rgba(236,72,153,0.1)" />',
+      esfera: '<circle cx="50" cy="50" r="35" fill="url(#gradEsfera)" stroke="none" /><defs><radialGradient id="gradEsfera" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#ec4899" stop-opacity="0.1"/><stop offset="100%" stop-color="#ec4899" stop-opacity="0.7"/></radialGradient></defs>'
+    };
+
+    const shapeNames = {
+      cuadrado: 'Cuadrado', rectangulo: 'Rectángulo', rombo: 'Rombo', paralelogramo: 'Paralelogramo',
+      trapecio: 'Trapecio', triangulo: 'Triángulo', circulo: 'Círculo', pentagono: 'Pentágono',
+      hexagono: 'Hexágono', octogono: 'Octógono',
+      agudo: 'Agudo', recto: 'Recto', obtuso: 'Obtuso', plano: 'Plano', completo: 'Completo',
+      paralelas: 'Paralelas', perpendiculares: 'Perpendiculares', secantes: 'Secantes',
+      cubo: 'Cubo', piramide: 'Pirámide', prisma: 'Prisma', cilindro: 'Cilindro', cono: 'Cono', esfera: 'Esfera'
+    };
+
+    const levelData = {
+      blanco: [
+        { q: "¿Qué forma geométrica es esta?", shapes: ['cuadrado','rectangulo','rombo','paralelogramo','trapecio','triangulo','circulo','pentagono','hexagono','octogono'], ans: (s) => shapeNames[s] },
+        { q: "¿Cuántos LADOS tiene?", shapes: ['cuadrado','rectangulo','rombo','trapecio','triangulo','pentagono','hexagono','octogono'], ans: (s) => ({cuadrado:'4', rectangulo:'4', rombo:'4', trapecio:'4', triangulo:'3', pentagono:'5', hexagono:'6', octogono:'8'}[s]) },
+        { q: "¿Cuántos VÉRTICES (puntas) tiene?", shapes: ['cuadrado','triangulo','pentagono','hexagono','octogono'], ans: (s) => ({cuadrado:'4', triangulo:'3', pentagono:'5', hexagono:'6', octogono:'8'}[s]) }
+      ],
+      naranja: [
+        { q: "¿Qué tipo de ángulo es?", shapes: ['agudo', 'recto', 'obtuso', 'plano', 'completo'], ans: (s) => shapeNames[s] },
+        { q: "¿Cómo son estas líneas entre sí?", shapes: ['paralelas', 'perpendiculares', 'secantes'], ans: (s) => shapeNames[s] }
+      ],
+      azul: [
+        { q: "¿Qué figura 3D es esta?", shapes: ['cubo', 'piramide', 'prisma', 'cilindro', 'cono', 'esfera'], ans: (s) => shapeNames[s] },
+        { q: "¿Cuántas caras planas tiene un cubo?", shapes: ['cubo'], ans: () => '6' },
+        { q: "¿Cuántas bases tiene un cilindro?", shapes: ['cilindro'], ans: () => '2' },
+        { q: "¿Tiene vértices (puntas) la esfera?", shapes: ['esfera'], ans: () => '0' }
+      ]
+    };
+
+    const levelSelector = document.getElementById('level-selector');
+    const gameArea = document.getElementById('game-area');
+    const visualBox = document.getElementById('visual-box');
+    const questionText = document.getElementById('question-text');
+    const optionsGrid = document.getElementById('options-grid');
+    const feedbackEl = document.getElementById('feedback');
+    const scoreEl = document.getElementById('score');
+    const streakEl = document.getElementById('streak');
+    const headerTexts = document.querySelector('.header');
+    const beltBtns = document.querySelectorAll('.belt-btn');
+
+    function showLevelSelector() {
+      gameArea.classList.remove('active');
+      levelSelector.style.display = 'flex';
+      headerTexts.style.display = 'block';
+    }
+
+    beltBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentLevel = btn.dataset.level;
+        levelSelector.style.display = 'none';
+        headerTexts.style.display = 'none'; 
+        gameArea.classList.add('active');
+        
+        score = 0; streak = 0;
+        updateScore();
+        feedbackEl.textContent = '';
+        generateProblem();
+      });
+    });
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function generateProblem() {
+      isWaiting = false;
+      
+      const btns = Array.from(optionsGrid.children);
+      btns.forEach(b => {
+        b.className = 'option-btn';
+        b.disabled = false;
+      });
+
+      let qData, shape, correctAnswer, allAnswers = [];
+
+      if (currentLevel === 'negro') {
+        const type = Math.random() > 0.5 ? 'perimetro' : 'area';
+        const shapeType = Math.random() > 0.5 ? 'cuadrado' : 'rectangulo';
+        
+        let l1 = randomInt(2, 9);
+        let l2 = shapeType === 'cuadrado' ? l1 : randomInt(2, 10);
+        if (shapeType === 'rectangulo' && l1 === l2) l2++; 
+
+        // Generamos el SVG con márgenes interiores para que quepan los textos fuera del dibujo
+        if (shapeType === 'cuadrado') {
+          visualBox.innerHTML = `<svg viewBox="0 0 100 100"><rect x="25" y="20" width="50" height="50" /><text x="50" y="90" font-size="14" text-anchor="middle">${l1} m</text><text x="10" y="50" font-size="14" text-anchor="start">${l1} m</text></svg>`;
+          if (type === 'perimetro') {
+            questionText.textContent = "¿Cuál es el PERÍMETRO? (Borde total)";
+            correctAnswer = String(l1 * 4) + ' m';
+          } else {
+            questionText.textContent = "¿Cuál es el ÁREA? (Lado x Lado)";
+            correctAnswer = String(l1 * l1) + ' m²';
+          }
+        } else {
+          visualBox.innerHTML = `<svg viewBox="0 0 100 100"><rect x="15" y="30" width="70" height="40" /><text x="50" y="90" font-size="14" text-anchor="middle">${l2} m</text><text x="5" y="55" font-size="12" text-anchor="start">${l1} m</text></svg>`;
+          if (type === 'perimetro') {
+            questionText.textContent = "¿Cuál es el PERÍMETRO del rectángulo?";
+            correctAnswer = String(l1*2 + l2*2) + ' m';
+          } else {
+            questionText.textContent = "¿Cuál es el ÁREA? (Base x Altura)";
+            correctAnswer = String(l1 * l2) + ' m²';
+          }
+        }
+
+        allAnswers.push(correctAnswer);
+        let suffix = type === 'perimetro' ? ' m' : ' m²';
+        while (allAnswers.length < 4) {
+          let wrong = randomInt(4, 80) + suffix;
+          if (!allAnswers.includes(wrong)) allAnswers.push(wrong);
+        }
+      } 
+      else {
+        const levelPool = levelData[currentLevel];
+        qData = levelPool[randomInt(0, levelPool.length - 1)];
+        shape = qData.shapes[randomInt(0, qData.shapes.length - 1)];
+        
+        visualBox.innerHTML = `<svg viewBox="0 0 100 100">${svgLib[shape]}</svg>`;
+        questionText.textContent = qData.q;
+        
+        correctAnswer = qData.ans(shape);
+        allAnswers.push(correctAnswer);
+        
+        if (isNaN(parseInt(correctAnswer))) {
+          let pool = [];
+          if (currentLevel === 'blanco') pool = ['Cuadrado', 'Rectángulo', 'Rombo', 'Trapecio', 'Triángulo', 'Círculo', 'Pentágono', 'Hexágono', 'Octógono'];
+          else if (currentLevel === 'naranja' && qData.q.includes('ángulo')) pool = ['Agudo', 'Recto', 'Obtuso', 'Plano', 'Completo'];
+          else if (currentLevel === 'naranja' && qData.q.includes('líneas')) pool = ['Paralelas', 'Perpendiculares', 'Secantes', 'Curvas'];
+          else if (currentLevel === 'azul') pool = ['Cubo', 'Pirámide', 'Prisma', 'Cilindro', 'Cono', 'Esfera'];
+          
+          while(allAnswers.length < 4) {
+            let w = pool[randomInt(0, pool.length-1)];
+            if(!allAnswers.includes(w)) allAnswers.push(w);
+          }
+        } 
+        else {
+          let cNum = parseInt(correctAnswer);
+          while(allAnswers.length < 4) {
+            let w = String(Math.max(0, cNum + randomInt(-3, 4)));
+            if(!allAnswers.includes(w)) allAnswers.push(w);
+          }
+        }
+      }
+
+      shuffle(allAnswers);
+      correctAnswerIndex = allAnswers.indexOf(correctAnswer);
+      
+      for(let i=0; i<4; i++) {
+        btns[i].textContent = allAnswers[i];
+      }
+    }
+
+    function checkAnswer(index) {
+      if (isWaiting) return;
+      isWaiting = true; 
+      
+      const btns = Array.from(optionsGrid.children);
+      const visBox = document.getElementById('visual-box');
+      
+      if (index === correctAnswerIndex) {
+        score++; streak++;
+        updateScore();
+        
+        btns[index].classList.add('correct-show');
+        
+        // EFECTOS ACIERTO
+        document.body.classList.add('flash-active');
+        visBox.classList.add('pop-active');
+        
+        const rect = visBox.getBoundingClientRect();
+        createExplosion(rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+        setTimeout(() => { 
+          document.body.classList.remove('flash-active');
+          visBox.classList.remove('pop-active');
+        }, 600);
+
+        setTimeout(() => { generateProblem(); }, 1200);
+      } else {
+        streak = 0;
+        updateScore();
+        
+        btns[index].classList.add('wrong-show');
+        btns[correctAnswerIndex].classList.add('correct-show');
+        
+        // EFECTOS FALLO
+        document.body.classList.add('error-active');
+        visBox.classList.add('shake-active');
+        
+        setTimeout(() => { 
+          document.body.classList.remove('error-active');
+          visBox.classList.remove('shake-active');
+        }, 500);
+        
+        setTimeout(() => { generateProblem(); }, 2200);
+      }
+    }
+
+    function updateScore() {
+      scoreEl.textContent = score;
+      streakEl.textContent = streak;
+    }
+
+    function initTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
+    }
+    
+    function toggleTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('mathjr_theme', 'dark');
+        document.getElementById('theme-icon').textContent = '☀️';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('mathjr_theme', 'light');
+        document.getElementById('theme-icon').textContent = '🌙';
+      }
+    }
+    
+    window.addEventListener('DOMContentLoaded', initTheme);
+  </script>
+</body>
+</html>

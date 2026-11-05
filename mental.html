@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script>
+    if (localStorage.getItem('mathjr_theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Rayo Mental | Math Dojo Junior</title>
+  <meta name="theme-color" content="#0f172a">
+  
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --border-color: #334155;
+      
+      --belt-blanco: #f8fafc;
+      --belt-naranja: #f97316;
+      --belt-azul: #3b82f6;
+      --belt-negro: #0f172a;
+    }
+    
+    [data-theme="light"] {
+      --bg-primary: #f0fdf4; 
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --belt-negro: #1e293b;
+    }
+    
+    * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
+    
+    body {
+      margin: 0; padding: 0;
+      background-color: var(--bg-primary); color: var(--text-main);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      transition: background-color 0.3s, color 0.3s;
+      overflow-x: hidden;
+    }
+
+    /* BARRA SUPERIOR */
+    .top-nav {
+      width: 100%; max-width: 800px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem;
+    }
+    
+    .btn-nav {
+      background: var(--bg-card); border: 2px solid var(--border-color);
+      border-radius: 50px; cursor: pointer; padding: 0.6rem 1rem;
+      font-size: 1.2rem; color: var(--text-main);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-decoration: none; font-weight: bold;
+      transition: transform 0.15s;
+    }
+    .btn-nav:active { transform: scale(0.9); }
+
+    .header { text-align: center; margin-bottom: 1.5rem; }
+    .header h1 { font-size: clamp(2rem, 6vw, 2.5rem); margin: 0; color: #f59e0b; }
+    .header p { color: var(--text-muted); margin: 0.5rem 0 0 0; font-size: 1.1rem; }
+
+    /* SELECTOR DE CINTURONES (VERTICAL CENTRADO) */
+    .level-selector {
+      width: 90%; max-width: 400px;
+      display: flex; flex-direction: column; gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .belt-btn {
+      width: 100%;
+      padding: 1.2rem; border-radius: 20px; border: 4px solid;
+      font-size: 1.3rem; font-weight: 800; cursor: pointer;
+      background: var(--bg-card); color: var(--text-main);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    .belt-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    
+    .belt-btn[data-level="blanco-sumas"],
+    .belt-btn[data-level="blanco-restas"] { border-color: #cbd5e1; }
+    .belt-btn[data-level="naranja"] { border-color: var(--belt-naranja); }
+    .belt-btn[data-level="azul"] { border-color: var(--belt-azul); }
+    .belt-btn[data-level="negro"] { border-color: var(--belt-negro); }
+    
+    .belt-text { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; }
+    .belt-desc { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-top: 0.3rem; }
+
+    /* ÁREA DEL JUEGO */
+    .game-area {
+      display: none; 
+      width: 94%; max-width: 800px;
+      flex-direction: column; align-items: center;
+    }
+    .game-area.active { display: flex; }
+
+    .game-header {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem; padding: 0 1rem;
+    }
+    .change-level-btn {
+      background: none; border: none; color: var(--belt-naranja);
+      font-weight: bold; font-size: 1rem; cursor: pointer;
+      text-decoration: underline; padding: 0;
+    }
+    
+    .score-board {
+      font-size: 1.3rem; font-weight: bold; color: var(--text-muted);
+      display: flex; gap: 1rem;
+    }
+
+    /* DISEÑO ADAPTATIVO (Juego + Teclado) */
+    .game-layout {
+      width: 100%;
+      background: var(--bg-card);
+      border: 3px solid var(--border-color);
+      border-radius: 24px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      display: flex; flex-direction: column; gap: 2rem; align-items: center;
+    }
+
+    .problem-section {
+      display: flex; flex-direction: column; align-items: center; flex: 1;
+    }
+
+    .equation {
+      font-size: clamp(3.5rem, 10vw, 5rem); font-weight: 900; margin: 0.5rem 0;
+      letter-spacing: 2px; text-align: center;
+    }
+
+    /* Input falso/solo lectura */
+    .answer-display {
+      width: 180px; height: 80px;
+      font-size: 3.5rem; font-weight: bold; text-align: center;
+      border-radius: 16px; border: 4px solid var(--border-color);
+      background: var(--bg-primary); color: var(--text-main);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .answer-display.focus { border-color: #3b82f6; }
+
+    .feedback {
+      height: 2.5rem; font-size: 1.5rem; font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+    }
+    .feedback.correct { color: #10b981; animation: bounce 0.5s; }
+    .feedback.wrong { color: #ef4444; animation: shake 0.4s; }
+
+    /* TECLADO VIRTUAL */
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      width: 100%; max-width: 320px;
+    }
+    .key-btn {
+      background: var(--bg-primary);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      font-size: 2rem; font-weight: bold; color: var(--text-main);
+      padding: 0.8rem 0; cursor: pointer;
+      box-shadow: 0 5px 0 var(--border-color);
+      transition: transform 0.1s, box-shadow 0.1s;
+      user-select: none;
+    }
+    .key-btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--border-color); }
+    
+    .key-action { background: #ef4444; color: white; border-color: #b91c1c; box-shadow: 0 5px 0 #b91c1c; font-size: 1.5rem;}
+    .key-action:active { box-shadow: 0 0 0 #b91c1c; }
+    
+    .key-ok { background: #10b981; color: white; border-color: #059669; box-shadow: 0 5px 0 #059669; font-size: 1.5rem;}
+    .key-ok:active { box-shadow: 0 0 0 #059669; }
+
+    /* ADAPTACIÓN A PANTALLA HORIZONTAL O GRANDE */
+    @media (min-width: 650px) {
+      .game-layout {
+        flex-direction: row; justify-content: space-around;
+        padding: 2rem;
+      }
+      .problem-section { flex: 1; border-right: 3px dashed var(--border-color); padding-right: 2rem; }
+      .keypad { flex: 0.8; max-width: 280px; }
+      .header h1 { font-size: 3rem; }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-nav">
+    <a href="index.html" class="btn-nav">⬅️ Inicio</a>
+    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema">
+      <span id="theme-icon">☀️</span>
+    </button>
+  </div>
+
+  <div class="header">
+    <h1>⚡ Rayo Mental</h1>
+    <p>Elige tu cinturón y entrena tu mente</p>
+  </div>
+
+  <!-- SELECTOR DE CINTURONES -->
+  <div class="level-selector" id="level-selector">
+    <button class="belt-btn" data-level="blanco-sumas">
+      <span class="belt-text">Cinturón Blanco (Sumas) <span class="belt-desc">Infantil (Hasta el 12)</span></span>
+    </button>
+    <button class="belt-btn" data-level="blanco-restas">
+      <span class="belt-text">Cinturón Blanco (Restas) <span class="belt-desc">Infantil (Desde el 12)</span></span>
+    </button>
+    <button class="belt-btn" data-level="naranja">
+      <span class="belt-text">Cinturón Naranja <span class="belt-desc">1º - 2º Primaria</span></span>
+    </button>
+    <button class="belt-btn" data-level="azul">
+      <span class="belt-text">Cinturón Azul <span class="belt-desc">3º - 4º Primaria</span></span>
+    </button>
+    <button class="belt-btn" data-level="negro">
+      <span class="belt-text">Cinturón Negro <span class="belt-desc">5º - 6º Primaria</span></span>
+    </button>
+  </div>
+
+  <!-- ÁREA DEL JUEGO -->
+  <div class="game-area" id="game-area">
+    <div class="game-header">
+      <button class="change-level-btn" onclick="showLevelSelector()">🔄 Cambiar cinturón</button>
+      <div class="score-board">
+        <span>✅ <span id="score">0</span></span>
+        <span>🔥 <span id="streak">0</span></span>
+      </div>
+    </div>
+    
+    <div class="game-layout">
+      <!-- Problema -->
+      <div class="problem-section">
+        <div class="equation" id="equation">2 + 2 =</div>
+        <div class="answer-display focus" id="answer"></div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+      
+      <!-- Teclado Virtual -->
+      <div class="keypad">
+        <button class="key-btn" onclick="pressKey(1)">1</button>
+        <button class="key-btn" onclick="pressKey(2)">2</button>
+        <button class="key-btn" onclick="pressKey(3)">3</button>
+        <button class="key-btn" onclick="pressKey(4)">4</button>
+        <button class="key-btn" onclick="pressKey(5)">5</button>
+        <button class="key-btn" onclick="pressKey(6)">6</button>
+        <button class="key-btn" onclick="pressKey(7)">7</button>
+        <button class="key-btn" onclick="pressKey(8)">8</button>
+        <button class="key-btn" onclick="pressKey(9)">9</button>
+        <button class="key-btn key-action" onclick="clearAnswer()">Borrar</button>
+        <button class="key-btn" onclick="pressKey(0)">0</button>
+        <button class="key-btn key-ok" onclick="checkAnswer()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentLevel = '';
+    let currentAnswer = 0;
+    let userAnswerString = '';
+    let score = 0;
+    let streak = 0;
+    let isWaiting = false;
+
+    // Elementos del DOM
+    const levelSelector = document.getElementById('level-selector');
+    const gameArea = document.getElementById('game-area');
+    const equationEl = document.getElementById('equation');
+    const answerDisplay = document.getElementById('answer');
+    const feedbackEl = document.getElementById('feedback');
+    const scoreEl = document.getElementById('score');
+    const streakEl = document.getElementById('streak');
+    const beltBtns = document.querySelectorAll('.belt-btn');
+    const headerTexts = document.querySelector('.header');
+
+    // Cambiar de vista
+    function showLevelSelector() {
+      gameArea.classList.remove('active');
+      levelSelector.style.display = 'flex';
+      headerTexts.style.display = 'block';
+    }
+
+    // Configuración al elegir nivel
+    beltBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentLevel = btn.dataset.level;
+        levelSelector.style.display = 'none';
+        headerTexts.style.display = 'none'; 
+        gameArea.classList.add('active');
+        
+        score = 0; streak = 0;
+        updateScore();
+        feedbackEl.textContent = '';
+        generateProblem();
+      });
+    });
+
+    // Lógica del teclado
+    function pressKey(num) {
+      if (isWaiting) return;
+      if (userAnswerString.length < 4) { 
+        userAnswerString += num;
+        updateDisplay();
+      }
+    }
+    
+    function clearAnswer() {
+      if (isWaiting) return;
+      userAnswerString = '';
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      answerDisplay.textContent = userAnswerString;
+    }
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateProblem() {
+      let a, b, op;
+      userAnswerString = '';
+      updateDisplay();
+      isWaiting = false;
+      
+      if (currentLevel === 'blanco-sumas') {
+        op = '+';
+        a = randomInt(1, 10);
+        b = randomInt(1, 12 - a); 
+        currentAnswer = a + b;
+      }
+      else if (currentLevel === 'blanco-restas') {
+        op = '-';
+        a = randomInt(2, 12);
+        b = randomInt(1, a); 
+        currentAnswer = a - b;
+      }
+      else if (currentLevel === 'naranja') {
+        op = Math.random() > 0.5 ? '+' : '-';
+        if (op === '+') {
+          a = randomInt(5, 30); b = randomInt(5, 30);
+          currentAnswer = a + b;
+        } else {
+          a = randomInt(10, 40); b = randomInt(1, a);
+          currentAnswer = a - b;
+        }
+      }
+      else if (currentLevel === 'azul') {
+        const ops = ['+', '-', 'x', '÷'];
+        op = ops[randomInt(0, 3)];
+        if (op === '+') { a = randomInt(10, 50); b = randomInt(10, 50); currentAnswer = a + b; } 
+        else if (op === '-') { a = randomInt(20, 60); b = randomInt(5, a); currentAnswer = a - b; } 
+        else if (op === 'x') { a = randomInt(2, 10); b = randomInt(2, 10); currentAnswer = a * b; } 
+        else if (op === '÷') {
+          b = randomInt(2, 10); currentAnswer = randomInt(2, 10);
+          a = b * currentAnswer; 
+        }
+      }
+      else if (currentLevel === 'negro') {
+        const ops = ['+', '-', 'x', '÷'];
+        op = ops[randomInt(0, 3)];
+        if (op === '+') { a = randomInt(20, 100); b = randomInt(20, 100); currentAnswer = a + b; } 
+        else if (op === '-') { a = randomInt(30, 120); b = randomInt(10, a); currentAnswer = a - b; } 
+        else if (op === 'x') { a = randomInt(3, 12); b = randomInt(3, 12); currentAnswer = a * b; } 
+        else if (op === '÷') {
+          b = randomInt(3, 12); currentAnswer = randomInt(3, 15);
+          a = b * currentAnswer; 
+        }
+      }
+
+      equationEl.textContent = `${a} ${op} ${b} =`;
+    }
+
+    function checkAnswer() {
+      if (userAnswerString === '' || isWaiting) return;
+      isWaiting = true; 
+      
+      const userAnswer = parseInt(userAnswerString);
+
+      if (userAnswer === currentAnswer) {
+        score++; streak++;
+        feedbackEl.textContent = '¡Genial! ✨';
+        feedbackEl.className = 'feedback correct';
+        updateScore();
+        setTimeout(() => {
+          feedbackEl.textContent = '';
+          generateProblem();
+        }, 1000);
+      } else {
+        streak = 0;
+        feedbackEl.textContent = `¡Casi! Era ${currentAnswer}`;
+        feedbackEl.className = 'feedback wrong';
+        updateScore();
+        setTimeout(() => {
+          feedbackEl.textContent = '';
+          userAnswerString = '';
+          updateDisplay();
+          isWaiting = false;
+        }, 1800);
+      }
+    }
+
+    function updateScore() {
+      scoreEl.textContent = score;
+      streakEl.textContent = streak;
+    }
+
+    // Permitir teclado físico (PC/Mac)
+    document.addEventListener('keydown', (e) => {
+      if (!gameArea.classList.contains('active') || isWaiting) return;
+      
+      if (e.key >= '0' && e.key <= '9') {
+        pressKey(e.key);
+      } else if (e.key === 'Backspace') {
+        userAnswerString = userAnswerString.slice(0, -1);
+        updateDisplay();
+      } else if (e.key === 'Enter') {
+        checkAnswer();
+      } else if (e.key === 'Escape') {
+        clearAnswer();
+      }
+    });
+
+    // Gestión del tema
+    function initTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
+    }
+    
+    function toggleTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('mathjr_theme', 'dark');
+        document.getElementById('theme-icon').textContent = '☀️';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('mathjr_theme', 'light');
+        document.getElementById('theme-icon').textContent = '🌙';
+      }
+    }
+    
+    window.addEventListener('DOMContentLoaded', initTheme);
+  </script>
+</body>
+</html>
