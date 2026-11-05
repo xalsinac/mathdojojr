@@ -1,10 +1,27 @@
-const CACHE_NAME = 'mathjr-cache-v1';
+// Cambia la versión al publicar cambios para retirar el caché anterior.
+const CACHE_NAME = 'mathjr-cache-v11';
 
 // Archivos básicos a guardar al instalar la app
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json'
+  './sumas.html',
+  './restas.html',
+  './mental.html',
+  './multiplicaciones.html',
+  './divisiones.html',
+  './geometria.html',
+  './reloj.html',
+  './manifest.json',
+  './ui.css',
+  './accessibility.js',
+  './theme.js',
+  './practice-guide.js',
+  './practice-help.js',
+  './fox-mark.svg',
+  './dojo-icons.svg',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // INSTALACIÓN: Guardamos lo básico en caché
@@ -39,7 +56,7 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request)
       .then(networkResponse => {
-        // Si hay internet y la respuesta es válida, actualizamos la caché silenciosamente
+        // Red primero: el contenido publicado se muestra en cuanto está disponible.
         if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {

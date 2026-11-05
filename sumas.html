@@ -2,10 +2,21 @@
 <html lang="es">
 <head>
   <script>
-    if (localStorage.getItem('mathjr_theme') === 'light') {
+    let initialTheme = new URLSearchParams(location.hash.slice(1)).get('mathjr-theme');
+    if (!initialTheme) {
+      const savedCookie = document.cookie.match(/(?:^|; )mathjr_theme=(light|dark)(?:;|$)/);
+      if (savedCookie) initialTheme = savedCookie[1];
+    }
+    try { initialTheme = initialTheme || localStorage.getItem('mathjr_theme'); } catch (_) {}
+    if (initialTheme === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
     }
   </script>
+  <link rel="stylesheet" href="ui.css">
+  <script src="accessibility.js" defer></script>
+  <script src="theme.js" defer></script>
+  <script src="practice-guide.js" defer></script>
+  <script src="practice-help.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Súper Sumas | Math Dojo Junior</title>
@@ -229,12 +240,14 @@
 
     @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 <body>
   <div class="top-nav">
     <a href="index.html" class="btn-nav">⬅️ Inicio</a>
-    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema">
+    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
       <span id="theme-icon">☀️</span>
     </button>
   </div>
@@ -250,13 +263,13 @@
       <span class="belt-text">Cinturón Blanco <span class="belt-desc">2 cifras x 2 (Sin llevar)</span></span>
     </button>
     <button class="belt-btn" data-level="naranja">
-      <span class="belt-text">Cinturón Naranja <span class="belt-desc">3 cifras x 2 (Con llevadas)</span></span>
+      <span class="belt-text">Cinturón Naranja <span class="belt-desc">Dos números de 3 cifras (con llevadas)</span></span>
     </button>
     <button class="belt-btn" data-level="azul">
-      <span class="belt-text">Cinturón Azul <span class="belt-desc">5 cifras x 2 (Nivel Experto)</span></span>
+      <span class="belt-text">Cinturón Azul <span class="belt-desc">Dos números de 5 cifras</span></span>
     </button>
     <button class="belt-btn" data-level="negro">
-      <span class="belt-text">Cinturón Negro <span class="belt-desc">5 cifras x 4 filas (Maestro)</span></span>
+      <span class="belt-text">Cinturón Negro <span class="belt-desc">Suma de cuatro números de 5 cifras</span></span>
     </button>
   </div>
 
@@ -274,7 +287,7 @@
       <!-- Problema (Generado por JS) -->
       <div class="problem-section">
         <div id="sum-container"></div>
-        <div class="feedback" id="feedback"></div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
       </div>
       
       <!-- Teclado Virtual -->
@@ -396,12 +409,16 @@
         operands.push(t2*10 + u2);
       }
       else if (currentLevel === 'naranja') {
-        // 3x2 con llevadas
-        operands.push(randomInt(100, 999));
-        operands.push(randomInt(100, 999));
+        // Dos sumandos de tres cifras con al menos una llevada.
+        let a, b;
+        do {
+          a = randomInt(100, 999);
+          b = randomInt(100, 999);
+        } while (![1, 10, 100].some(place => Math.floor(a / place) % 10 + Math.floor(b / place) % 10 >= 10));
+        operands.push(a, b);
       }
       else if (currentLevel === 'azul') {
-        // 5x2 
+        // Dos sumandos de cinco cifras.
         operands.push(randomInt(10000, 99999));
         operands.push(randomInt(10000, 99999));
       }
@@ -487,17 +504,35 @@
         }, 1500);
       } else {
         streak = 0;
-        feedbackEl.textContent = `¡Ups! Revisa tus cálculos. Era ${expectedSum}`;
+        feedbackEl.textContent = 'Revisa las llevadas y vuelve a intentarlo.';
         feedbackEl.className = 'feedback wrong';
         updateScore();
         
-        // Al fallar, pasamos al siguiente problema igual que al acertar
-        setTimeout(() => {
-          feedbackEl.textContent = '';
-          generateProblem();
-        }, 2200);
+        isWaiting = false;
+        const unitsBox = document.querySelector('[data-id="r1"]');
+        if (unitsBox) setFocus(unitsBox);
       }
     }
+
+    window.getPracticeHint = function() {
+      const places = String(expectedSum).length;
+      const padded = operands.map(value => String(value).padStart(places, '0'));
+      let carry = 0;
+      let unitsHint = '';
+      for (let column = 1; column <= places; column++) {
+        const digits = padded.map(value => Number(value[value.length - column]));
+        const incomingCarry = carry;
+        const total = digits.reduce((sum, digit) => sum + digit, incomingCarry);
+        const columnName = column === 1 ? 'unidades' : column === 2 ? 'decenas' : column === 3 ? 'centenas' : `columna ${column}`;
+        const carryOut = Math.floor(total / 10);
+        const entered = document.querySelector(`[data-id="r${column}"]`)?.value;
+        const hint = `En ${columnName}: ${digits.join(' + ')}${incomingCarry ? ` + la llevada ${incomingCarry}` : ''} = ${total}. Aquí va ${total % 10}${carryOut ? ` y llevas ${carryOut}` : ''}.`;
+        if (!unitsHint) unitsHint = hint;
+        if (entered !== String(total % 10)) return hint;
+        carry = carryOut;
+      }
+      return unitsHint || 'Suma cada columna de derecha a izquierda y revisa las llevadas.';
+    };
 
     function updateScore() {
       scoreEl.textContent = score;
@@ -516,26 +551,7 @@
       }
     });
 
-    // Gestión del tema
-    function initTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
-    }
-    
-    function toggleTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      if (isLight) {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('mathjr_theme', 'dark');
-        document.getElementById('theme-icon').textContent = '☀️';
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('mathjr_theme', 'light');
-        document.getElementById('theme-icon').textContent = '🌙';
-      }
-    }
-    
-    window.addEventListener('DOMContentLoaded', initTheme);
+
   </script>
 </body>
 </html>

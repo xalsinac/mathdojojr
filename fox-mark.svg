@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Zorrito del Math Dojo</title>
+  <path fill="#f97316" d="M15 15 49 28 64 22l15 6 34-13-8 42c9 14 13 27 9 39-6 19-26 29-50 29s-44-10-50-29c-4-12 0-25 9-39z"/>
+  <path fill="#fff7ed" d="m27 32 19 8-13 22-14-19zm74 0-19 8 13 22 14-19zM34 76c0-13 12-23 30-23s30 10 30 23-12 26-30 26-30-13-30-26"/>
+  <path fill="#1e293b" d="M48 72a5 5 0 1 0 0 10 5 5 0 0 0 0-10m32 0a5 5 0 1 0 0 10 5 5 0 0 0 0-10m-16 13-7 7h14z"/>
+  <path fill="none" stroke="#1e293b" stroke-linecap="round" stroke-width="3" d="M41 88 22 85m20 9-18 2m63-8 19-3m-20 9 18 2"/>
+</svg>

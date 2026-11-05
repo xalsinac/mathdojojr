@@ -3,10 +3,19 @@
 <head>
   <script>
     // Usamos una clave distinta en localStorage para no pisar el tema del Dojo original
-    if (localStorage.getItem('mathjr_theme') === 'light') {
+    let initialTheme = new URLSearchParams(location.hash.slice(1)).get('mathjr-theme');
+    if (!initialTheme) {
+      const savedCookie = document.cookie.match(/(?:^|; )mathjr_theme=(light|dark)(?:;|$)/);
+      if (savedCookie) initialTheme = savedCookie[1];
+    }
+    try { initialTheme = initialTheme || localStorage.getItem('mathjr_theme'); } catch (_) {}
+    if (initialTheme === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
     }
   </script>
+  <link rel="stylesheet" href="ui.css">
+  <script src="accessibility.js" defer></script>
+  <script src="theme.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Math Dojo Junior 🦊</title>
@@ -69,7 +78,8 @@
     }
     
     .header-icon {
-      font-size: 4.5rem;
+      width: 5.5rem;
+      height: auto;
       margin-bottom: 0.5rem;
       line-height: 1;
       animation: float 3s ease-in-out infinite;
@@ -136,7 +146,9 @@
       line-height: 1;
       position: relative;
       z-index: 2;
+      color: #60a5fa;
     }
+    .game-icon svg { width: 1em; height: 1em; display: block; }
 
     .game-info {
       width: 100%;
@@ -199,15 +211,24 @@
     
     .card-reloj { border-color: rgba(20, 184, 166, 0.6); }
     .card-reloj h2 { color: #14b8a6; }
+    .card-calculo .game-icon { color: #f59e0b; }
+    .card-sumas .game-icon { color: #10b981; }
+    .card-restas .game-icon { color: #ef4444; }
+    .card-multi .game-icon { color: #3b82f6; }
+    .card-div .game-icon { color: #a855f7; }
+    .card-formas .game-icon { color: #ec4899; }
+    .card-reloj .game-icon { color: #14b8a6; }
+    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 <body>
-  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Cambiar tema">
+  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
     <span id="theme-icon">☀️</span>
   </button>
 
   <div class="header">
-    <div class="header-icon">🦊</div>
+    <img class="header-icon" src="fox-mark.svg" alt="" aria-hidden="true">
     <h1>Math Dojo <br>JUNIOR</h1>
     <p>¡Aprende mates jugando!</p>
   </div>
@@ -215,70 +236,70 @@
   <div class="games-grid">
     <!-- Cálculo Mental (mental.html) -->
     <a href="mental.html" class="game-card card-calculo">
-      <div class="game-icon">⚡</div>
+      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M36 5 14 35h15l-2 24 23-32H35z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
       <div class="game-info">
         <h2>Rayo Mental</h2>
-        <p>Cálculo rápido</p>
+        <p>Suma, resta, tablas y divisiones mentales</p>
       </div>
     </a>
 
     <!-- Sumas (sumas.html) -->
     <a href="sumas.html" class="game-card card-sumas">
-      <div class="game-icon">🦸‍♂️</div>
+      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M32 10v44M10 32h44" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></svg></div>
       <div class="game-info">
         <h2>Súper Sumas</h2>
-        <p>Con llevadas</p>
+        <p>Suma por columnas, paso a paso</p>
       </div>
     </a>
 
     <!-- Restas (restas.html) -->
     <a href="restas.html" class="game-card card-restas">
-      <div class="game-icon">🦸‍♀️</div>
+      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M11 32h42" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><circle cx="32" cy="32" r="25" fill="none" stroke="currentColor" stroke-width="4"/></svg></div>
       <div class="game-info">
         <h2>Restas Valientes</h2>
-        <p>Pidiendo prestado</p>
+        <p>Resta por columnas y préstamos</p>
       </div>
     </a>
 
     <!-- Multiplicaciones (multiplicaciones.html) -->
     <a href="multiplicaciones.html" class="game-card card-multi">
-      <div class="game-icon">✨</div>
+      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="m17 17 30 30M47 17 17 47" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></svg></div>
       <div class="game-info">
         <h2>Magia x Tablas</h2>
-        <p>Multiplicaciones</p>
+        <p>Tablas y multiplicación en columna</p>
       </div>
     </a>
 
     <!-- Divisiones (divisiones.html) -->
     <a href="divisiones.html" class="game-card card-div">
-      <div class="game-icon">🍕</div>
+      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M12 32h40" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="15" r="4" fill="currentColor"/><circle cx="32" cy="49" r="4" fill="currentColor"/></svg></div>
       <div class="game-info">
         <h2>Reparte Justo</h2>
-        <p>Halla el cociente</p>
+        <p>Cociente y resto</p>
       </div>
     </a>
 
     <!-- Formas geométricas (geometria.html) -->
     <a href="geometria.html" class="game-card card-formas">
-      <div class="game-icon">🔺</div>
+      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="m32 7 25 45H7z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="32" cy="35" r="9" fill="none" stroke="currentColor" stroke-width="4"/></svg></div>
       <div class="game-info">
         <h2>Explorador</h2>
-        <p>Formas 2D y 3D</p>
+        <p>Figuras, ángulos, áreas y perímetros</p>
       </div>
     </a>
 
     <!-- El Reloj / Tiempo (reloj.html) - Ocupa dos columnas al ser impar -->
     <a href="reloj.html" class="game-card card-reloj" style="grid-column: 1 / -1;">
-      <div class="game-icon">⏰</div>
+      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="34" r="24" fill="none" stroke="currentColor" stroke-width="4"/><path d="M32 17v18l12 8M23 5h18" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
       <div class="game-info">
         <h2>El Reloj Mágico</h2>
-        <p>Aprende las horas</p>
+        <p>Lee el reloj y practica las horas</p>
       </div>
     </a>
 
     <!-- Tarjeta Promo al Dojo original para los mayores -->
-    <a href="https://ruta-a-tu-math-dojo-original.com" target="_blank" rel="noopener noreferrer" class="game-card promo-card">
-      <div class="game-icon">⛩️</div>
+    <a href="https://mathlab-phi.vercel.app/" target="_blank" rel="noopener noreferrer" class="game-card promo-card">
+      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M10 19 32 7l22 12H10Zm4 7h36M17 26v25m10-25v25m10-25v25m10-25v25M10 55h44M7 60h50" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="game-info">
         <h2 style="color: #3b82f6;">¿Eres mayor?</h2>
         <p>Visita el <b>Math Dojo</b> para entrenar álgebra, ecuaciones y mucho más.</p>
@@ -286,27 +307,7 @@
     </a>
   </div>
 
-  <script>
-    function initTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
-    }
-    
-    function toggleTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      if (isLight) {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('mathjr_theme', 'dark');
-        document.getElementById('theme-icon').textContent = '☀️';
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('mathjr_theme', 'light');
-        document.getElementById('theme-icon').textContent = '🌙';
-      }
-    }
-    
-    window.addEventListener('DOMContentLoaded', initTheme);
-  </script>
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

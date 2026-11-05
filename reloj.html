@@ -2,10 +2,21 @@
 <html lang="es">
 <head>
   <script>
-    if (localStorage.getItem('mathjr_theme') === 'light') {
+    let initialTheme = new URLSearchParams(location.hash.slice(1)).get('mathjr-theme');
+    if (!initialTheme) {
+      const savedCookie = document.cookie.match(/(?:^|; )mathjr_theme=(light|dark)(?:;|$)/);
+      if (savedCookie) initialTheme = savedCookie[1];
+    }
+    try { initialTheme = initialTheme || localStorage.getItem('mathjr_theme'); } catch (_) {}
+    if (initialTheme === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
     }
   </script>
+  <link rel="stylesheet" href="ui.css">
+  <script src="accessibility.js" defer></script>
+  <script src="theme.js" defer></script>
+  <script src="practice-guide.js" defer></script>
+  <script src="practice-help.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>El Reloj Mágico | Math Dojo Junior</title>
@@ -155,6 +166,8 @@
     .clock-svg {
       width: 100%; height: 100%;
       pointer-events: none;
+      touch-action: none;
+      user-select: none;
     }
     
     .clock-interactive .clock-svg { pointer-events: auto; }
@@ -231,12 +244,14 @@
       .keypad, .options-grid { flex: 0.8; max-width: 280px; }
       .header h1 { font-size: 3rem; }
     }
+    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 <body>
   <div class="top-nav">
     <a href="index.html" class="btn-nav">⬅️ Inicio</a>
-    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema">
+    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
       <span id="theme-icon">☀️</span>
     </button>
   </div>
@@ -254,10 +269,10 @@
       <span class="belt-text">Cinturón Naranja <span class="belt-desc">Horas y minutos (de 5 en 5)</span></span>
     </button>
     <button class="belt-btn" data-level="azul">
-      <span class="belt-text">Cinturón Azul <span class="belt-desc">Toca y mueve las agujas 🖐️</span></span>
+      <span class="belt-text">Cinturón Azul <span class="belt-desc">Mueve las agujas o usa las flechas del teclado</span></span>
     </button>
     <button class="belt-btn" data-level="negro">
-      <span class="belt-text">Cinturón Negro <span class="belt-desc">Quarts (En català)</span></span>
+      <span class="belt-text">Cinturón Negro <span class="belt-desc">La hora en catalán: los cuartos van hacia la hora siguiente</span></span>
     </button>
   </div>
 
@@ -277,8 +292,8 @@
             <!-- Marcas de hora -->
             <g id="clock-ticks"></g>
             <!-- Agujas -->
-            <line id="hand-hour" class="hand-hour" x1="50" y1="50" x2="50" y2="28" />
-            <line id="hand-minute" class="hand-minute" x1="50" y1="50" x2="50" y2="15" />
+            <line id="hand-hour" class="hand-hour" x1="50" y1="50" x2="50" y2="28" role="slider" aria-label="Aguja de las horas" aria-valuemin="1" aria-valuemax="12" aria-valuenow="12" aria-valuetext="12" tabindex="-1" />
+            <line id="hand-minute" class="hand-minute" x1="50" y1="50" x2="50" y2="15" role="slider" aria-label="Aguja de los minutos" aria-valuemin="0" aria-valuemax="55" aria-valuenow="0" aria-valuetext="0 minutos" tabindex="-1" />
             <!-- Hitboxes -->
             <line id="hitbox-hour" class="hitbox" x1="50" y1="50" x2="50" y2="28" />
             <line id="hitbox-minute" class="hitbox" x1="50" y1="50" x2="50" y2="15" />
@@ -293,7 +308,7 @@
           <div class="digital-box" id="box-mm" data-id="mm" onclick="setFocus(this)"></div>
         </div>
 
-        <div class="feedback" id="feedback"></div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
       </div>
       
       <!-- CONTROLES -->
@@ -383,9 +398,13 @@
       
       handM.setAttribute('transform', transformM);
       hitboxM.setAttribute('transform', transformM);
+      handM.setAttribute('aria-valuenow', String(m));
+      handM.setAttribute('aria-valuetext', `${m} minutos`);
       
       handH.setAttribute('transform', transformH);
       hitboxH.setAttribute('transform', transformH);
+      handH.setAttribute('aria-valuenow', String(h));
+      handH.setAttribute('aria-valuetext', `${h} horas`);
     }
 
     // --- LÓGICA ARRASTRE ---
@@ -396,16 +415,18 @@
       e.preventDefault();
       if(e.target.id === 'hitbox-hour') activeHand = 'hour';
       else if(e.target.id === 'hitbox-minute') activeHand = 'minute';
-      if(activeHand) clockSvg.classList.add('dragging');
+      if(activeHand) {
+        clockSvg.classList.add('dragging');
+        clockSvg.setPointerCapture(e.pointerId);
+      }
     }
 
     function doDrag(e) {
       if(!activeHand) return;
       e.preventDefault();
       
-      let clientX, clientY;
-      if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-      else { clientX = e.clientX; clientY = e.clientY; }
+      const clientX = e.clientX;
+      const clientY = e.clientY;
 
       const rect = clockSvg.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
@@ -430,12 +451,24 @@
       clockSvg.classList.remove('dragging');
     }
 
-    clockSvg.addEventListener('mousedown', startDrag);
-    clockSvg.addEventListener('touchstart', startDrag, {passive: false});
-    window.addEventListener('mousemove', doDrag);
-    window.addEventListener('touchmove', doDrag, {passive: false});
-    window.addEventListener('mouseup', endDrag);
-    window.addEventListener('touchend', endDrag);
+    function adjustClockHand(event, hand) {
+      if (currentLevel !== 'azul' || isWaiting) return;
+      const increments = { ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1 };
+      const step = increments[event.key];
+      if (!step) return;
+      event.preventDefault();
+      if (hand === 'hour') interactiveH = ((interactiveH - 1 + step + 12) % 12) + 1;
+      else interactiveM = (interactiveM + step * 5 + 60) % 60;
+      setClockVisuals(interactiveH, interactiveM);
+    }
+
+    handH.addEventListener('keydown', event => adjustClockHand(event, 'hour'));
+    handM.addEventListener('keydown', event => adjustClockHand(event, 'minute'));
+
+    clockSvg.addEventListener('pointerdown', startDrag);
+    clockSvg.addEventListener('pointermove', doDrag);
+    clockSvg.addEventListener('pointerup', endDrag);
+    clockSvg.addEventListener('pointercancel', endDrag);
 
 
     // --- GENERADOR CATALÁN ---
@@ -491,6 +524,8 @@
       optionsGrid.style.display = 'none';
       btnAzul.style.display = 'none';
       document.getElementById('clock-container').classList.remove('clock-interactive');
+      handH.setAttribute('tabindex', '-1');
+      handM.setAttribute('tabindex', '-1');
       
       inputValues = { hh: '', mm: '' };
       boxHH.textContent = ''; boxMM.textContent = '';
@@ -521,6 +556,8 @@
         interactiveH = 12; interactiveM = 0;
         setClockVisuals(12, 0);
         document.getElementById('clock-container').classList.add('clock-interactive');
+        handH.setAttribute('tabindex', '0');
+        handM.setAttribute('tabindex', '0');
         
         targetTextEl.style.display = 'block';
         targetTextEl.textContent = `Pon las: ${String(targetH).padStart(2, '0')}:${String(targetM).padStart(2, '0')}`;
@@ -596,8 +633,10 @@
       } else {
         failEffect();
         btns[index].classList.add('wrong-show');
-        btns[correctCatalanIndex].classList.add('correct-show');
-        setTimeout(generateProblem, 2500);
+        setTimeout(() => {
+          btns[index].classList.remove('wrong-show');
+          isWaiting = false;
+        }, 700);
       }
     }
 
@@ -623,13 +662,8 @@
         setTimeout(generateProblem, 1500);
       } else {
         failEffect();
-        if(currentLevel === 'azul') {
-           feedbackEl.textContent = `¡Ups! Era así:`;
-           setClockVisuals(targetH, targetM); 
-        }
-        setTimeout(() => {
-          generateProblem(); // Ahora avanza en todos los niveles
-        }, 2500);
+        feedbackEl.textContent = 'No pasa nada. Revisa las agujas y prueba otra vez.';
+        setTimeout(() => { isWaiting = false; }, 700);
       }
     }
 
@@ -669,23 +703,22 @@
 
     function updateScore() { scoreEl.textContent = score; streakEl.textContent = streak; }
 
-    function initTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
-    }
-    function toggleTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      if (isLight) {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('mathjr_theme', 'dark');
-        document.getElementById('theme-icon').textContent = '☀️';
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('mathjr_theme', 'light');
-        document.getElementById('theme-icon').textContent = '🌙';
+    window.getPracticeHint = function() {
+      if (currentLevel === 'negro') {
+        const nextHour = (targetH % 12) + 1;
+        if (targetM === 0) return 'Cuando las agujas están en punto, en catalán se añade «en punt». No se cuentan cuartos.';
+        const quarters = targetM / 15;
+        const quarterText = quarters === 1 ? 'un quart' : quarters === 2 ? 'dos quarts' : 'tres quarts';
+        return `En catalán se cuentan ${quarterText} hacia la hora siguiente (${nextHour}).`;
       }
-    }
-    window.addEventListener('DOMContentLoaded', initTheme);
+      if (currentLevel === 'azul') {
+        return `La hora objetivo es ${targetH}. Para los minutos, divide ${targetM} entre 5: coloca la aguja larga en ese número.`;
+      }
+      if (currentLevel === 'blanco') return 'La aguja larga debe apuntar al 12 porque son minutos en punto. Mira qué hora marca la corta.';
+      return 'Cuenta de cinco en cinco desde el 12 para leer los minutos de la aguja larga.';
+    };
+
+
   </script>
 </body>
 </html>

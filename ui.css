@@ -1,0 +1,209 @@
+/* Reglas compartidas de interacción y accesibilidad para Math Dojo Junior. */
+body {
+  background-image:
+    radial-gradient(ellipse at 8% 0%, rgba(59, 130, 246, 0.08), transparent 42%),
+    radial-gradient(ellipse at 96% 20%, rgba(168, 85, 247, 0.07), transparent 38%);
+}
+
+:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+}
+
+button,
+a,
+[role="textbox"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+button,
+.btn-nav,
+.key-btn,
+.belt-btn,
+.change-level-btn {
+  min-height: 44px;
+}
+
+.game-header {
+  display: grid !important;
+  grid-template-columns: auto minmax(12rem, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.85rem 1rem !important;
+  margin: 0 0 0.9rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  color: #fff;
+  background: linear-gradient(112deg, #1d4ed8 0%, #4f46e5 56%, #7c3aed 100%);
+  box-shadow: 0 12px 28px rgba(37, 56, 148, 0.22);
+}
+
+[data-theme="light"] .game-header {
+  background: linear-gradient(112deg, #2563eb 0%, #4f46e5 56%, #7c3aed 100%);
+}
+
+.game-header .change-level-btn {
+  min-height: 48px;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff !important;
+  font-weight: 900;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+
+.top-nav + .header {
+  width: min(92%, 800px);
+  padding: 1.2rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-left: 6px solid currentColor;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-primary));
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+}
+
+.top-nav + .header h1 { letter-spacing: -0.035em; }
+.top-nav + .header p { max-width: 42rem; margin-inline: auto; line-height: 1.45; }
+
+.score-board {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.45rem !important;
+  padding: 0.42rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.97) !important;
+  color: #1e293b !important;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.score-board > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 4.5rem;
+  justify-content: center;
+  padding: 0.55rem 0.7rem;
+  border-radius: 13px;
+  background: #f1f5f9;
+}
+
+.active-level {
+  display: block;
+  justify-self: center;
+  max-width: 100%;
+  padding: 0.65rem 1.2rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  font-weight: 900;
+  text-overflow: ellipsis;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.change-level-btn,
+.belt-btn,
+.btn-nav,
+.key-btn,
+.option-btn {
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.belt-btn:hover,
+.option-btn:hover,
+.game-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+}
+
+.practice-guide {
+  width: min(92vw, 540px);
+  max-width: 540px;
+  padding: 0;
+  border: 2px solid var(--border-color);
+  border-radius: 26px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-family: inherit;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+}
+
+.practice-guide::backdrop {
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.practice-guide__content { padding: clamp(1.25rem, 5vw, 2rem); }
+.practice-guide__eyebrow { color: #f59e0b; font-size: 0.78rem; font-weight: 900; letter-spacing: 0.12em; }
+.practice-guide h2 { margin: 0.4rem 0 1rem; font-size: clamp(1.4rem, 5vw, 2rem); }
+.practice-guide__example { padding: 1rem; border-radius: 16px; background: var(--bg-primary); font-size: clamp(1.15rem, 4vw, 1.5rem); font-weight: 900; line-height: 1.45; }
+.practice-guide__tip { color: var(--text-muted); line-height: 1.55; }
+.practice-guide__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
+.practice-guide__actions button { min-height: 48px; padding: 0.7rem 1rem; border: 2px solid var(--border-color); border-radius: 14px; background: var(--bg-primary); color: var(--text-main); font: inherit; font-weight: 800; cursor: pointer; }
+.practice-guide__actions .practice-guide__start { border-color: #059669; background: #10b981; color: #fff; }
+
+.practice-help-toggle {
+  min-height: 44px;
+  margin-top: 0.35rem;
+  padding: 0.5rem 0.9rem;
+  border: 2px solid rgba(245, 158, 11, 0.65);
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--text-main);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.practice-help-panel {
+  width: min(100%, 34rem);
+  margin-top: 0.65rem;
+  padding: 0.85rem 1rem;
+  border-left: 4px solid #f59e0b;
+  border-radius: 0 14px 14px 0;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--text-main);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.game-area.active { animation: dojo-enter 0.22s ease-out both; }
+@keyframes dojo-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 720px) {
+  .game-header { grid-template-columns: minmax(0, 1fr) auto; gap: 0.65rem; }
+  .active-level { grid-column: 1 / -1; grid-row: 1; width: 100%; }
+  .game-header .change-level-btn { grid-column: 1; grid-row: 2; justify-self: start; }
+  .game-header .score-board { grid-column: 2; grid-row: 2; }
+}
+
+@media (max-width: 420px) {
+  .practice-guide__actions { flex-direction: column-reverse; }
+  .practice-guide__actions button { width: 100%; }
+  .game-header .change-level-btn { padding-inline: 0.7rem; font-size: 0.9rem; }
+  .score-board > span { min-width: 3.5rem; padding-inline: 0.45rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

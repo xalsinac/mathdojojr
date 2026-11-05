@@ -2,10 +2,21 @@
 <html lang="es">
 <head>
   <script>
-    if (localStorage.getItem('mathjr_theme') === 'light') {
+    let initialTheme = new URLSearchParams(location.hash.slice(1)).get('mathjr-theme');
+    if (!initialTheme) {
+      const savedCookie = document.cookie.match(/(?:^|; )mathjr_theme=(light|dark)(?:;|$)/);
+      if (savedCookie) initialTheme = savedCookie[1];
+    }
+    try { initialTheme = initialTheme || localStorage.getItem('mathjr_theme'); } catch (_) {}
+    if (initialTheme === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
     }
   </script>
+  <link rel="stylesheet" href="ui.css">
+  <script src="accessibility.js" defer></script>
+  <script src="theme.js" defer></script>
+  <script src="practice-guide.js" defer></script>
+  <script src="practice-help.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Magia x Tablas | Math Dojo Junior</title>
@@ -231,12 +242,14 @@
 
     @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 <body>
   <div class="top-nav">
     <a href="index.html" class="btn-nav">⬅️ Inicio</a>
-    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema">
+    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
       <span id="theme-icon">☀️</span>
     </button>
   </div>
@@ -285,7 +298,7 @@
         <!-- Vista Vertical en Caja (Resto de cinturones) -->
         <div id="vertical-container"></div>
         
-        <div class="feedback" id="feedback"></div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
       </div>
       
       <!-- Teclado Virtual -->
@@ -315,6 +328,8 @@
     let streak = 0;
     let isWaiting = false;
     let focusedInput = null;
+    let practiceMultiplicand = 0;
+    let practiceMultiplier = 0;
 
     const levelSelector = document.getElementById('level-selector');
     const gameArea = document.getElementById('game-area');
@@ -415,6 +430,8 @@
         
         let a = randomInt(2, 10);
         let b = randomInt(2, 10);
+        practiceMultiplicand = a;
+        practiceMultiplier = b;
         expectedInputs['h-single'] = String(a * b);
         hEquation.textContent = `${a} x ${b} = `;
         setFocus(hAnswer);
@@ -445,6 +462,9 @@
           op1Str = String(a_int / 10).replace('.', ',');
           op2Str = String(b_int / 10).replace('.', ',');
         }
+
+        practiceMultiplicand = a_int;
+        practiceMultiplier = b_int;
 
         let b_str = String(b_int);
         let partials = [];
@@ -570,12 +590,25 @@ function renderGrid(op1Str, op2Str, partials, finalStr) {
         feedbackEl.className = 'feedback wrong';
         updateScore();
         
-        setTimeout(() => {
-          feedbackEl.textContent = '';
-          isWaiting = false;
-        }, 2200);
+        setTimeout(() => { isWaiting = false; }, 700);
       }
     }
+
+    window.getPracticeHint = function() {
+      if (currentLevel === 'blanco') {
+        const [, a, b] = hEquation.textContent.match(/(\d+) x (\d+)/) || [];
+        return a && b ? `Piensa en ${a} grupos de ${b}. Busca ${a} × ${b} en la tabla del ${b}.` : 'Recuerda las tablas y cuenta grupos iguales.';
+      }
+      const wrongId = focusOrder.find(id => document.querySelector(`[data-id="${id}"]`)?.value !== expectedInputs[id]);
+      if (wrongId?.startsWith('p')) {
+        const partial = practiceMultiplicand * (practiceMultiplier % 10);
+        return `Revisa la primera fila parcial: multiplica ${practiceMultiplicand} por la cifra de unidades, ${practiceMultiplier % 10}. El producto completo es ${partial}; alinea sus cifras desde las unidades.`;
+      }
+      if (wrongId?.startsWith('f_')) return 'Cuando las filas parciales estén bien, súmalas en columna. Recuerda desplazar una posición la fila de las decenas.';
+      const units = practiceMultiplier % 10;
+      const partial = practiceMultiplicand * units;
+      return `Empieza por las unidades del multiplicador: ${practiceMultiplicand} × ${units} = ${partial}. Esa es la primera fila parcial. Después suma las filas.` + (currentLevel === 'negro' ? ' Al final coloca dos cifras decimales.' : '');
+    };
 
     function updateScore() {
       scoreEl.textContent = score;
@@ -596,26 +629,7 @@ function renderGrid(op1Str, op2Str, partials, finalStr) {
       }
     });
 
-    // Gestión del tema
-    function initTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
-    }
-    
-    function toggleTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      if (isLight) {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('mathjr_theme', 'dark');
-        document.getElementById('theme-icon').textContent = '☀️';
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('mathjr_theme', 'light');
-        document.getElementById('theme-icon').textContent = '🌙';
-      }
-    }
-    
-    window.addEventListener('DOMContentLoaded', initTheme);
+
   </script>
 </body>
 </html>

@@ -2,10 +2,21 @@
 <html lang="es">
 <head>
   <script>
-    if (localStorage.getItem('mathjr_theme') === 'light') {
+    let initialTheme = new URLSearchParams(location.hash.slice(1)).get('mathjr-theme');
+    if (!initialTheme) {
+      const savedCookie = document.cookie.match(/(?:^|; )mathjr_theme=(light|dark)(?:;|$)/);
+      if (savedCookie) initialTheme = savedCookie[1];
+    }
+    try { initialTheme = initialTheme || localStorage.getItem('mathjr_theme'); } catch (_) {}
+    if (initialTheme === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
     }
   </script>
+  <link rel="stylesheet" href="ui.css">
+  <script src="accessibility.js" defer></script>
+  <script src="theme.js" defer></script>
+  <script src="practice-guide.js" defer></script>
+  <script src="practice-help.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Explorador de Formas | Math Dojo Junior</title>
@@ -202,12 +213,14 @@
     }
     .feedback.correct { color: var(--accent-success); }
     .feedback.wrong { color: var(--accent-error); }
+    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 <body>
   <div class="top-nav">
     <a href="index.html" class="btn-nav">⬅️ Inicio</a>
-    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema">
+    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
       <span id="theme-icon">☀️</span>
     </button>
   </div>
@@ -252,7 +265,7 @@
         <button class="option-btn" onclick="checkAnswer(3)">Opción 4</button>
       </div>
 
-      <div class="feedback" id="feedback"></div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
     </div>
   </div>
 
@@ -398,6 +411,8 @@
 
     function generateProblem() {
       isWaiting = false;
+      feedbackEl.textContent = '';
+      feedbackEl.className = 'feedback';
       
       const btns = Array.from(optionsGrid.children);
       btns.forEach(b => {
@@ -514,7 +529,6 @@
         updateScore();
         
         btns[index].classList.add('wrong-show');
-        btns[correctAnswerIndex].classList.add('correct-show');
         
         // EFECTOS FALLO
         document.body.classList.add('error-active');
@@ -525,7 +539,12 @@
           visBox.classList.remove('shake-active');
         }, 500);
         
-        setTimeout(() => { generateProblem(); }, 2200);
+        feedbackEl.textContent = 'Esa opción no coincide. Observa la figura y prueba otra vez.';
+        feedbackEl.className = 'feedback wrong';
+        setTimeout(() => {
+          btns.forEach(button => button.classList.remove('wrong-show', 'correct-show'));
+          isWaiting = false;
+        }, 700);
       }
     }
 
@@ -534,25 +553,16 @@
       streakEl.textContent = streak;
     }
 
-    function initTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
-    }
-    
-    function toggleTheme() {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      if (isLight) {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('mathjr_theme', 'dark');
-        document.getElementById('theme-icon').textContent = '☀️';
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('mathjr_theme', 'light');
-        document.getElementById('theme-icon').textContent = '🌙';
-      }
-    }
-    
-    window.addEventListener('DOMContentLoaded', initTheme);
+    window.getPracticeHint = function() {
+      const question = questionText.textContent.toLowerCase();
+      if (question.includes('área')) return 'Para el área, multiplica la base por la altura. La unidad se escribe en m².';
+      if (question.includes('perímetro')) return 'Para el perímetro, suma todos los lados del borde. La unidad se escribe en m.';
+      if (question.includes('ángulo')) return 'Compara con un ángulo recto: menos de 90° es agudo; más de 90° es obtuso.';
+      if (question.includes('líneas')) return 'Mira cómo se encuentran: ¿no se cruzan, se cruzan en 90°, o se cortan con otro ángulo?';
+      return 'Cuenta las propiedades de la figura. En 2D mira lados y vértices; en 3D, caras, aristas y vértices.';
+    };
+
+
   </script>
 </body>
 </html>
