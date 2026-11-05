@@ -10,9 +10,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Math Dojo Junior 🦊</title>
-  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Math Dojo Jr">
+  <meta name="theme-color" content="#0f172a">
+
   
   <style>
     :root {
@@ -303,6 +306,13 @@
     }
     
     window.addEventListener('DOMContentLoaded', initTheme);
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('Fallo al registrar SW', err));
+      });
+    }
   </script>
 </body>
 </html>
