@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script>
+    let initialTheme = new URLSearchParams(location.hash.slice(1)).get('mathjr-theme');
+    if (!initialTheme) {
+      const savedCookie = document.cookie.match(/(?:^|; )mathjr_theme=(light|dark)(?:;|$)/);
+      if (savedCookie) initialTheme = savedCookie[1];
+    }
+    try { initialTheme = initialTheme || localStorage.getItem('mathjr_theme'); } catch (_) {}
+    if (initialTheme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  </script>
+  <link rel="stylesheet" href="ui.css">
+  <script src="accessibility.js" defer></script>
+  <script src="theme.js" defer></script>
+  <script src="practice-guide.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <title>Lee Números | Math Dojo Junior</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc;
+      --text-muted: #cbd5e1; --border-color: #334155;
+    }
+    [data-theme="light"] {
+      --bg-primary: #f0fdf4; --bg-card: #fff; --text-main: #1e293b;
+      --text-muted: #64748b; --border-color: #dbeafe;
+    }
+    * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
+    body {
+      min-height: 100vh; margin: 0; padding: 0 0 2rem; overflow-x: hidden;
+      display: flex; flex-direction: column; align-items: center;
+      background: var(--bg-primary); color: var(--text-main);
+      transition: background-color .25s, color .25s;
+    }
+    .top-nav { width: min(100%, 900px); padding: 1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; }
+    .btn-nav { min-height:48px; padding:.6rem 1rem; border:2px solid var(--border-color); border-radius:50px; background:var(--bg-card); color:var(--text-main); font-size:1.1rem; font-weight:800; text-decoration:none; cursor:pointer; }
+    .header { width:min(92%, 760px); margin:0 auto 1.2rem; padding:1rem 1.5rem; text-align:center; border:1px solid var(--border-color); border-radius:24px; background:linear-gradient(135deg,var(--bg-card),var(--bg-primary)); box-shadow:0 12px 28px #0002; }
+    .header h1 { margin:0; color:#0ea5e9; font-size:clamp(2rem,7vw,3.1rem); }
+    .header p { margin:.35rem 0 0; color:var(--text-muted); font-size:1.1rem; }
+    .level-selector { width:min(92%,760px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:1rem; margin:0 auto 2rem; }
+    .belt-btn { min-height:145px; padding:1.2rem; border:3px solid; border-radius:22px; background:var(--bg-card); color:var(--text-main); box-shadow:0 8px 18px #0002; cursor:pointer; text-align:center; }
+    .belt-btn[data-level="blanco"] { border-color:#cbd5e1; }
+    .belt-btn[data-level="naranja"] { border-color:#f97316; }
+    .belt-btn[data-level="negro"] { border-color:#334155; }
+    .belt-text { display:flex; flex-direction:column; align-items:center; gap:.45rem; font-size:1.35rem; font-weight:900; }
+    .belt-desc { color:var(--text-muted); font-size:1rem; font-weight:600; line-height:1.4; }
+    .game-area { display:none; width:min(94%,820px); flex-direction:column; align-items:center; }
+    .game-area.active { display:flex; }
+    .game-header { width:100%; display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; }
+    .change-level-btn { padding:.65rem 1rem; border:1px solid #ffffff70; border-radius:15px; color:white; background:#ffffff20; font-weight:900; cursor:pointer; }
+    .score-board { display:flex; gap:.5rem; padding:.4rem; border-radius:18px; background:#fff; color:#1e293b; font-weight:900; }
+    .score-board span { padding:.4rem .65rem; border-radius:12px; background:#f1f5f9; white-space:nowrap; }
+    .active-level { padding:.6rem .8rem; border-radius:14px; background:#ffffff24; color:white; font-weight:900; text-align:center; }
+    .game-layout { position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:1.25rem; width:100%; min-height:390px; padding:clamp(1.2rem,5vw,2.5rem); border:3px solid var(--border-color); border-radius:28px; background:var(--bg-card); box-shadow:0 12px 28px #0002; }
+    .prompt { margin:0; color:var(--text-muted); font-weight:800; font-size:1.1rem; text-align:center; }
+    .number-card { position:relative; display:grid; place-items:center; width:min(100%,480px); min-height:150px; padding:1rem; border-radius:26px; background:linear-gradient(135deg,#e0f2fe,#ede9fe); color:#1e3a8a; box-shadow:inset 0 -7px #1e40af20,0 10px 20px #0002; }
+    [data-theme="dark"] .number-card { background:linear-gradient(135deg,#164e63,#4c1d95); color:#f8fafc; }
+    .number-card::before,.number-card::after { position:absolute; color:#f59e0b; font-size:2rem; }
+    .number-card::before { content:'✦'; top:12px; left:18px; }.number-card::after { content:'✦'; bottom:10px; right:20px; font-size:1.4rem; }
+    .number { margin:0; font-size:clamp(4rem,16vw,7rem); font-weight:1000; letter-spacing:.03em; line-height:1; }
+    .number-words { margin:0; max-width:650px; font-size:clamp(1.55rem,6vw,2.5rem); font-weight:900; line-height:1.25; text-align:center; }
+    .options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; width:min(100%,620px); }
+    .option-btn { min-height:64px; padding:.65rem; border:2px solid var(--border-color); border-radius:17px; background:var(--bg-primary); color:var(--text-main); font-size:clamp(1.1rem,4vw,1.4rem); font-weight:850; cursor:pointer; box-shadow:0 4px 0 var(--border-color); transition:transform .15s, background .15s; }
+    .option-btn:hover:not(:disabled) { transform:translateY(-2px); }
+    .option-btn:disabled { cursor:default; opacity:.76; }
+    .option-btn.is-correct { border-color:#10b981; background:#d1fae5; color:#065f46; animation:pop .35s ease-out; }
+    .option-btn.is-wrong { border-color:#ef4444; background:#fee2e2; color:#991b1b; animation:shake .3s; }
+    .feedback { min-height:2rem; margin:0; font-size:1.15rem; font-weight:900; text-align:center; }
+    .feedback.correct { color:#10b981; }.feedback.wrong { color:#ef4444; }
+    .actions { display:flex; flex-wrap:wrap; justify-content:center; gap:.7rem; }
+    .primary-action,.hint-action { min-height:52px; padding:.7rem 1.2rem; border:0; border-radius:16px; font-size:1.1rem; font-weight:900; cursor:pointer; }
+    .primary-action { color:#fff; background:#0ea5e9; box-shadow:0 5px #0369a1; }
+    .hint-action { border:2px solid var(--border-color); color:var(--text-main); background:var(--bg-primary); }
+    .hint { min-height:1.5rem; margin:0; color:var(--text-muted); text-align:center; font-weight:700; }
+    .adult-note { max-width:650px; padding:.75rem 1rem; border-radius:14px; background:#fef3c7; color:#78350f; text-align:center; font-weight:750; }
+    [hidden] { display:none !important; }
+    @keyframes pop { 50% { transform:scale(1.06); } }
+    @keyframes shake { 25% { transform:translateX(-5px); } 75% { transform:translateX(5px); } }
+    @media(max-width:540px) { .game-header { display:grid; grid-template-columns:1fr auto; }.active-level { grid-column:1/-1; grid-row:1; }.change-level-btn { grid-row:2; }.score-board { grid-column:2; grid-row:2; }.game-layout { min-height:350px; }.option-btn { min-height:76px; } }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; } }
+  </style>
+</head>
+<body>
+  <nav class="top-nav" aria-label="Navegación principal">
+    <a href="index.html" class="btn-nav">⬅️ Inicio</a>
+    <button class="btn-nav" type="button" onclick="toggleTheme()" aria-label="Cambiar tema de color"><span id="theme-icon">☀️</span></button>
+  </nav>
+  <header class="header">
+    <h1>🔎 Lee Números</h1>
+    <p>Los números están por todas partes. ¡Vamos a leerlos!</p>
+  </header>
+  <section class="level-selector" id="level-selector" aria-label="Elige cómo practicar">
+    <button class="belt-btn" data-level="blanco" type="button"><span class="belt-text">🥋 Cinturón Blanco<span class="belt-desc">Lee en voz alta números de hasta 2 cifras, con un adulto.</span></span></button>
+    <button class="belt-btn" data-level="naranja" type="button"><span class="belt-text">🟠 Cinturón Naranja<span class="belt-desc">Lee en voz alta números de hasta 4 cifras, con un adulto.</span></span></button>
+    <button class="belt-btn" data-level="negro" type="button"><span class="belt-text">⚫ Cinturón Negro<span class="belt-desc">Lee el número escrito con letras y elige su cifra.</span></span></button>
+  </section>
+  <main class="game-area" id="game-area">
+    <div class="game-header">
+      <button class="change-level-btn" type="button" onclick="showLevelSelector()">🔄 Cambiar cinturón</button>
+      <span class="active-level" id="active-level" aria-live="polite"></span>
+      <div class="score-board" aria-label="Marcador"><span id="score-label">🔢 Leídos <b id="score">0</b></span><span id="streak-label" hidden>🔥 Racha <b id="streak">0</b></span></div>
+    </div>
+    <section class="game-layout" aria-labelledby="prompt">
+      <p class="prompt" id="prompt"></p>
+      <div class="number-card"><p class="number" id="number" aria-live="polite"></p><p class="number-words" id="number-words" hidden></p></div>
+      <p class="adult-note" id="adult-note" hidden>Turno de leer en voz alta: si estáis jugando juntos, ¡podéis decirlo a la vez!</p>
+      <div class="options" id="options" role="group" aria-label="Elige el número"></div>
+      <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+      <div class="actions">
+        <button class="primary-action" id="next-btn" type="button">Siguiente número ➜</button>
+        <button class="hint-action" id="hint-btn" type="button" hidden>💡 Ver una pista</button>
+      </div>
+      <p class="hint" id="hint" aria-live="polite"></p>
+    </section>
+  </main>
+  <script>
+    const selector = document.getElementById('level-selector');
+    const gameArea = document.getElementById('game-area');
+    const numberEl = document.getElementById('number');
+    const wordsEl = document.getElementById('number-words');
+    const optionsEl = document.getElementById('options');
+    const promptEl = document.getElementById('prompt');
+    const feedbackEl = document.getElementById('feedback');
+    const hintEl = document.getElementById('hint');
+    const nextBtn = document.getElementById('next-btn');
+    const hintBtn = document.getElementById('hint-btn');
+    const scoreEl = document.getElementById('score');
+    const streakEl = document.getElementById('streak');
+    const currentLevelEl = document.getElementById('active-level');
+    let level = '';
+    let answer = 0;
+    let score = 0;
+    let streak = 0;
+    let completed = false;
+    let visits = 0;
+    let hintOpen = false;
+
+    function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function numberToWords(n) {
+      const units = ['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve'];
+      const teens = ['diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve'];
+      const twenties = ['veinte','veintiuno','veintidós','veintitrés','veinticuatro','veinticinco','veintiséis','veintisiete','veintiocho','veintinueve'];
+      const tens = ['', '', 'veinte','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'];
+      const hundreds = ['', 'ciento','doscientos','trescientos','cuatrocientos','quinientos','seiscientos','setecientos','ochocientos','novecientos'];
+      if (n < 10) return units[n];
+      if (n < 20) return teens[n - 10];
+      if (n < 30) return twenties[n - 20];
+      if (n < 100) return n % 10 ? `${tens[Math.floor(n / 10)]} y ${units[n % 10]}` : tens[n / 10];
+      if (n === 100) return 'cien';
+      if (n < 1000) return `${hundreds[Math.floor(n / 100)]}${n % 100 ? ` ${numberToWords(n % 100)}` : ''}`;
+      const thousands = Math.floor(n / 1000);
+      return `${thousands === 1 ? 'mil' : `${units[thousands]} mil`}${n % 1000 ? ` ${numberToWords(n % 1000)}` : ''}`;
+    }
+    function makeProblem() {
+      completed = false;
+      feedbackEl.textContent = '';
+      feedbackEl.className = 'feedback';
+      hintEl.textContent = '';
+      hintOpen = false;
+      hintBtn.textContent = '💡 Ver una pista';
+      hintBtn.hidden = level !== 'negro';
+      if (level !== 'negro') {
+        answer = level === 'blanco' ? randomInt(1, 99) : randomInt(100, 9999);
+        promptEl.textContent = '¿Qué número es este? Léelo en voz alta.';
+        numberEl.hidden = false;
+        wordsEl.hidden = true;
+        numberEl.textContent = answer;
+        document.getElementById('adult-note').hidden = false;
+        optionsEl.hidden = true;
+        nextBtn.hidden = false;
+        nextBtn.textContent = 'Siguiente número ➜';
+        document.getElementById('score-label').firstChild.textContent = '🔢 Leídos ';
+      } else {
+        answer = randomInt(0, 999);
+        promptEl.textContent = '¿Qué cifra corresponde a este nombre?';
+        numberEl.hidden = true;
+        wordsEl.hidden = false;
+        wordsEl.textContent = numberToWords(answer);
+        document.getElementById('adult-note').hidden = true;
+        optionsEl.hidden = false;
+        nextBtn.hidden = true;
+        nextBtn.textContent = 'Siguiente número ➜';
+        document.getElementById('score-label').firstChild.textContent = '✅ Aciertos ';
+        const choices = new Set([answer]);
+        while (choices.size < 4) {
+          const offset = randomInt(1, 30) * (Math.random() < 0.5 ? -1 : 1);
+          const candidate = Math.max(0, Math.min(999, answer + offset));
+          choices.add(candidate);
+        }
+        optionsEl.replaceChildren(...[...choices].sort(() => Math.random() - 0.5).map(value => {
+          const button = document.createElement('button');
+          button.type = 'button'; button.className = 'option-btn'; button.textContent = value;
+          button.addEventListener('click', () => chooseAnswer(button, value));
+          return button;
+        }));
+      }
+      if (level === 'negro') streakEl.textContent = streak;
+    }
+    function chooseAnswer(button, value) {
+      if (completed) return;
+      if (value === answer) {
+        completed = true; score++; streak++;
+        button.classList.add('is-correct');
+        optionsEl.querySelectorAll('button').forEach(option => option.disabled = true);
+        feedbackEl.textContent = '¡Lo has leído y encontrado! ✨';
+        feedbackEl.className = 'feedback correct';
+        scoreEl.textContent = score; streakEl.textContent = streak;
+        nextBtn.hidden = false; nextBtn.focus();
+      } else {
+        button.classList.add('is-wrong');
+        feedbackEl.textContent = '¡Casi! Prueba otra opción. Puedes pedir una pista.';
+        feedbackEl.className = 'feedback wrong';
+        button.disabled = true;
+        streak = 0; streakEl.textContent = streak;
+      }
+    }
+    window.showLevelSelector = function() {
+      gameArea.classList.remove('active'); selector.hidden = false; selector.style.display = 'grid';
+      document.querySelector('.header').hidden = false;
+    };
+    document.querySelectorAll('.belt-btn').forEach(button => button.addEventListener('click', () => {
+      level = button.dataset.level;
+      score = 0; streak = 0; visits = 0;
+      const levelNames = {
+        blanco: '🥋 Cinturón Blanco · Hasta 2 cifras',
+        naranja: '🟠 Cinturón Naranja · Hasta 4 cifras',
+        negro: '⚫ Cinturón Negro · Palabras a cifras',
+      };
+      currentLevelEl.textContent = levelNames[level];
+      document.getElementById('streak-label').hidden = level !== 'negro';
+      selector.hidden = true; selector.style.display = 'none'; document.querySelector('.header').hidden = true;
+      gameArea.classList.add('active'); makeProblem();
+    }));
+    nextBtn.addEventListener('click', () => {
+      if (level !== 'negro') { visits++; score = visits; scoreEl.textContent = score; }
+      makeProblem();
+    });
+    hintBtn.addEventListener('click', () => {
+      hintOpen = !hintOpen;
+      if (!hintOpen) { hintEl.textContent = ''; hintBtn.textContent = '💡 Ver una pista'; return; }
+      const thousands = Math.floor(answer / 1000) * 1000;
+      const hundreds = Math.floor((answer % 1000) / 100) * 100;
+      const tens = Math.floor((answer % 100) / 10) * 10;
+      const units = answer % 10;
+      hintEl.textContent = `Pista: separa millares, centenas, decenas y unidades: ${thousands} + ${hundreds} + ${tens} + ${units}.`;
+      hintBtn.textContent = '🙈 Ocultar pista';
+    });
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 // Cambia la versión al publicar cambios para retirar el caché anterior.
-const CACHE_NAME = 'mathjr-cache-v11';
+const CACHE_NAME = 'mathjr-cache-v13';
 
 // Archivos básicos a guardar al instalar la app
 const urlsToCache = [
@@ -12,6 +12,7 @@ const urlsToCache = [
   './divisiones.html',
   './geometria.html',
   './reloj.html',
+  './leer-numeros.html',
   './manifest.json',
   './ui.css',
   './accessibility.js',
