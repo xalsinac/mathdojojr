@@ -58,6 +58,13 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 0.9rem;
+      text-decoration: none;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .constellation-pill:hover {
+      background: rgba(99, 102, 241, 0.22);
+      border-color: rgba(99, 102, 241, 0.55);
+      transform: translateY(-1px);
     }
 
     .header-avatar-wrap {
@@ -316,7 +323,7 @@
 
   <!-- Cabecera de Portada -->
   <div class="header">
-    <span class="constellation-pill">🚀 Constelación Math Universe</span>
+    <a href="https://mathuniverse-beta.vercel.app/" target="_blank" rel="noopener noreferrer" class="constellation-pill" title="Visitar Math Universe">🚀 Constelación Math Universe ↗</a>
     <div class="header-avatar-wrap">
       <img class="header-icon" id="dojo-avatar" src="fox-mark.svg" alt="Compañero del Dojo">
     </div>
@@ -547,10 +554,10 @@
     </a>
 
     <!-- Tarjeta Enlace a Math Universe -->
-    <a href="../Math%20Universe/" class="game-card promo-card" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+    <a href="https://mathuniverse-beta.vercel.app/" target="_blank" rel="noopener noreferrer" class="game-card promo-card" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
       <div class="game-icon" aria-hidden="true">🌌</div>
       <div class="game-info">
-        <h2 style="color: #818cf8;">Math Universe</h2>
+        <h2 style="color: #818cf8;">Math Universe ↗</h2>
         <p>Explora la constelación completa: juegos de física, álgebra y simulaciones.</p>
       </div>
     </a>
