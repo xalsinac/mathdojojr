@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Búho Sabio del Math Dojo">
+  <defs>
+    <linearGradient id="owlFeathers" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="owlBeak" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="owlHeadband" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <filter id="owlShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Sombra base -->
+  <ellipse cx="64" cy="116" rx="36" ry="7" fill="#000" opacity="0.15"/>
+
+  <!-- Penachos / Plumas superiores (orejas de búho) -->
+  <path d="M28 42 L16 18 C26 24 38 32 44 40 Z" fill="#5b21b6"/>
+  <path d="M30 40 L20 22 C28 26 38 32 42 39 Z" fill="url(#owlFeathers)"/>
+
+  <path d="M100 42 L112 18 C102 24 90 32 84 40 Z" fill="#5b21b6"/>
+  <path d="M98 40 L108 22 C100 26 90 32 86 39 Z" fill="url(#owlFeathers)"/>
+
+  <!-- Cabeza / Cuerpo redondeado de búho -->
+  <path d="M64 28 C34 28 22 48 22 72 C22 92 36 104 64 104 C92 104 106 92 106 72 C106 48 94 28 64 28 Z" fill="url(#owlFeathers)" filter="url(#owlShadow)"/>
+
+  <!-- Disco facial en forma de corazón suave (plumaje claro) -->
+  <path d="M64 62 C54 48 28 48 28 68 C28 88 50 98 64 101 C78 98 100 88 100 68 C100 48 74 48 64 62 Z" fill="#f5f3ff"/>
+
+  <!-- Cinta de Karate / Hachimaki dorado -->
+  <path d="M22 48 C38 44 64 43 106 48 L105 58 C64 53 38 54 23 58 Z" fill="url(#owlHeadband)"/>
+  <circle cx="64" cy="51" r="5" fill="#fef08a"/>
+  <!-- Nudo lateral de la cinta -->
+  <path d="M104 50 C112 45 118 49 116 57 C114 63 106 59 104 54 Z" fill="#f59e0b"/>
+  <path d="M105 53 C113 53 118 61 114 68 C111 73 104 67 104 60 Z" fill="#b45309"/>
+
+  <!-- Ojos Enormes de Búho Sabio (con bordes dorados e iris ámbar/estrellado) -->
+  <circle cx="44" cy="72" r="15" fill="#fef3c7"/>
+  <circle cx="44" cy="72" r="13" fill="#fbbf24"/>
+  <ellipse cx="45" cy="72" rx="9" ry="10" fill="#1e1b4b"/>
+  <ellipse cx="43" cy="69" rx="4" ry="4.5" fill="#ffffff"/>
+  <circle cx="48" cy="76" r="1.8" fill="#ffffff"/>
+
+  <circle cx="84" cy="72" rx="15" fill="#fef3c7"/>
+  <circle cx="84" cy="72" rx="13" fill="#fbbf24"/>
+  <ellipse cx="83" cy="72" rx="9" ry="10" fill="#1e1b4b"/>
+  <ellipse cx="81" cy="69" rx="4" ry="4.5" fill="#ffffff"/>
+  <circle cx="86" cy="76" r="1.8" fill="#ffffff"/>
+
+  <!-- Mejillas sonrosadas -->
+  <ellipse cx="30" cy="83" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.4"/>
+  <ellipse cx="98" cy="83" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.4"/>
+
+  <!-- Pico curvado de búho -->
+  <path d="M60 74 C60 71 68 71 68 74 L66 84 C65 87 63 87 62 84 Z" fill="url(#owlBeak)"/>
+
+  <!-- Plumitas del pecho -->
+  <path d="M56 94 Q64 97 72 94" fill="none" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round"/>
+</svg>

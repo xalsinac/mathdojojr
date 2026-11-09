@@ -12,250 +12,231 @@
       document.documentElement.setAttribute('data-theme', 'light');
     }
   </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Rayo Mental | Math Dojo Junior ⚡</title>
+  <meta name="theme-color" content="#101116">
+
   <link rel="stylesheet" href="ui.css">
+  <script src="dojo-audio.js" defer></script>
+  <script src="dojo-fx.js" defer></script>
+  <script src="dojo-progress.js" defer></script>
   <script src="accessibility.js" defer></script>
   <script src="theme.js" defer></script>
   <script src="practice-guide.js" defer></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Rayo Mental | Math Dojo Junior</title>
-  <meta name="theme-color" content="#0f172a">
-  
+
   <style>
-    :root {
-      --bg-primary: #0f172a;
-      --bg-card: #1e293b;
-      --text-main: #f8fafc;
-      --text-muted: #cbd5e1;
-      --border-color: #334155;
-      
-      --belt-blanco: #f8fafc;
-      --belt-naranja: #f97316;
-      --belt-azul: #3b82f6;
-      --belt-negro: #0f172a;
-    }
-    
-    [data-theme="light"] {
-      --bg-primary: #f0fdf4; 
-      --bg-card: #ffffff;
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-      --belt-negro: #1e293b;
-    }
-    
-    * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
-    
-    body {
-      margin: 0; padding: 0;
-      background-color: var(--bg-primary); color: var(--text-main);
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      transition: background-color 0.3s, color 0.3s;
-      overflow-x: hidden;
-    }
-
-    /* BARRA SUPERIOR */
-    .top-nav {
-      width: 100%; max-width: 800px;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 1rem 1.5rem;
-    }
-    
-    .btn-nav {
-      background: var(--bg-card); border: 2px solid var(--border-color);
-      border-radius: 50px; cursor: pointer; padding: 0.6rem 1rem;
-      font-size: 1.2rem; color: var(--text-main);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      text-decoration: none; font-weight: bold;
-      transition: transform 0.15s;
-    }
-    .btn-nav:active { transform: scale(0.9); }
-
-    .header { text-align: center; margin-bottom: 1.5rem; }
-    .header h1 { font-size: clamp(2rem, 6vw, 2.5rem); margin: 0; color: #f59e0b; }
-    .header p { color: var(--text-muted); margin: 0.5rem 0 0 0; font-size: 1.1rem; }
-
-    /* SELECTOR DE CINTURONES (VERTICAL CENTRADO) */
-    .level-selector {
-      width: 90%; max-width: 400px;
-      display: flex; flex-direction: column; gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .belt-btn {
-      width: 100%;
-      padding: 1.2rem; border-radius: 20px; border: 4px solid;
-      font-size: 1.3rem; font-weight: 800; cursor: pointer;
-      background: var(--bg-card); color: var(--text-main);
-      display: flex; align-items: center; justify-content: center;
-      text-align: center;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
-    .belt-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    
-    .belt-btn[data-level="blanco-sumas"],
-    .belt-btn[data-level="blanco-restas"] { border-color: #cbd5e1; }
-    .belt-btn[data-level="naranja"] { border-color: var(--belt-naranja); }
-    .belt-btn[data-level="azul"] { border-color: var(--belt-azul); }
-    .belt-btn[data-level="negro"] { border-color: var(--belt-negro); }
-    
-    .belt-text { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; }
-    .belt-desc { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-top: 0.3rem; }
-
-    /* ÁREA DEL JUEGO */
     .game-area {
-      display: none; 
-      width: 94%; max-width: 800px;
-      flex-direction: column; align-items: center;
+      display: none;
+      width: min(96%, 640px);
+      flex-direction: column;
+      align-items: center;
     }
     .game-area.active { display: flex; }
 
-    .game-header {
-      width: 100%; display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 1rem; padding: 0 1rem;
-    }
-    .change-level-btn {
-      background: none; border: none; color: var(--belt-naranja);
-      font-weight: bold; font-size: 1rem; cursor: pointer;
-      text-decoration: underline; padding: 0;
-    }
-    
-    .score-board {
-      font-size: 1.3rem; font-weight: bold; color: var(--text-muted);
-      display: flex; gap: 1rem;
-    }
-
-    /* DISEÑO ADAPTATIVO (Juego + Teclado) */
     .game-layout {
       width: 100%;
       background: var(--bg-card);
-      border: 3px solid var(--border-color);
-      border-radius: 24px;
-      padding: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      display: flex; flex-direction: column; gap: 2rem; align-items: center;
+      border: 2px solid var(--border-card);
+      border-radius: 28px;
+      padding: 1.6rem 1.2rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: center;
     }
 
     .problem-section {
-      display: flex; flex-direction: column; align-items: center; flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
     }
 
     .equation {
-      font-size: clamp(3.5rem, 10vw, 5rem); font-weight: 900; margin: 0.5rem 0;
-      letter-spacing: 2px; text-align: center;
+      font-size: clamp(2.8rem, 8.5vw, 4rem);
+      font-weight: 800;
+      color: var(--accent-gold);
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.04em;
+      min-height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* Input falso/solo lectura */
     .answer-display {
-      width: 180px; height: 80px;
-      font-size: 3.5rem; font-weight: bold; text-align: center;
-      border-radius: 16px; border: 4px solid var(--border-color);
-      background: var(--bg-primary); color: var(--text-main);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 1rem;
+      width: clamp(160px, 45vw, 210px);
+      height: clamp(70px, 16vw, 84px);
+      font-size: clamp(2.6rem, 7vw, 3.4rem);
+      font-weight: 800;
+      text-align: center;
+      border-radius: 20px;
+      border: 2.5px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.6rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .answer-display.focus { border-color: #3b82f6; }
+    .answer-display.focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+      background: var(--bg-card);
+    }
 
     .feedback {
-      height: 2.5rem; font-size: 1.5rem; font-weight: bold;
-      display: flex; align-items: center; justify-content: center;
+      min-height: 2.2rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
     }
-    .feedback.correct { color: #10b981; animation: bounce 0.5s; }
-    .feedback.wrong { color: #ef4444; animation: shake 0.4s; }
+    .feedback.correct { color: #10b981; animation: bounce 0.4s; }
+    .feedback.wrong { color: #f43f5e; animation: shake 0.35s; }
 
-    /* TECLADO VIRTUAL */
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.8rem;
-      width: 100%; max-width: 320px;
-    }
-    .key-btn {
-      background: var(--bg-primary);
-      border: 2px solid var(--border-color);
-      border-radius: 16px;
-      font-size: 2rem; font-weight: bold; color: var(--text-main);
-      padding: 0.8rem 0; cursor: pointer;
-      box-shadow: 0 5px 0 var(--border-color);
-      transition: transform 0.1s, box-shadow 0.1s;
-      user-select: none;
-    }
-    .key-btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--border-color); }
-    
-    .key-action { background: #ef4444; color: white; border-color: #b91c1c; box-shadow: 0 5px 0 #b91c1c; font-size: 1.5rem;}
-    .key-action:active { box-shadow: 0 0 0 #b91c1c; }
-    
-    .key-ok { background: #10b981; color: white; border-color: #059669; box-shadow: 0 5px 0 #059669; font-size: 1.5rem;}
-    .key-ok:active { box-shadow: 0 0 0 #059669; }
-
-    /* ADAPTACIÓN A PANTALLA HORIZONTAL O GRANDE */
-    @media (min-width: 650px) {
+    @media (min-width: 680px) {
       .game-layout {
-        flex-direction: row; justify-content: space-around;
-        padding: 2rem;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 2.2rem 1.6rem;
       }
-      .problem-section { flex: 1; border-right: 3px dashed var(--border-color); padding-right: 2rem; }
-      .keypad { flex: 0.8; max-width: 280px; }
-      .header h1 { font-size: 3rem; }
+      .problem-section {
+        flex: 1.2;
+        border-right: 2px dashed var(--border-color);
+        padding-right: 1.6rem;
+      }
+      .keypad {
+        flex: 0.9;
+        max-width: 290px;
+      }
     }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 <body>
+  <!-- Barra de Navegación -->
   <div class="top-nav">
     <a href="index.html" class="btn-nav">⬅️ Inicio</a>
-    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
-      <span id="theme-icon">☀️</span>
-    </button>
+    <div class="top-nav-group">
+      <button class="sound-toggle-btn" type="button" onclick="DojoAudio.toggleMute()" aria-label="Silenciar o activar sonido" title="Sonido">
+        <span class="sound-icon">🔊</span>
+      </button>
+      <button class="theme-toggle-btn" type="button" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
+        <span id="theme-icon">☀️</span>
+      </button>
+    </div>
   </div>
 
   <div class="header">
-    <h1>⚡ Rayo Mental</h1>
-    <p>Elige tu cinturón y entrena tu mente</p>
+    <h1 style="color: #f59e0b;">⚡ Rayo Mental</h1>
+    <p>Elige tu cinturón, entrena la mente y completa tu ronda</p>
   </div>
 
   <!-- SELECTOR DE CINTURONES -->
   <div class="level-selector" id="level-selector">
     <button class="belt-btn" data-level="blanco-sumas">
-      <span class="belt-text">Cinturón Blanco (Sumas) <span class="belt-desc">Sumas con resultados hasta 12</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Blanco (Sumas)</span>
+        <span class="belt-desc">Sumas rápidas de reflejos hasta 12</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="blanco-sumas">🥋</div>
     </button>
     <button class="belt-btn" data-level="blanco-restas">
-      <span class="belt-text">Cinturón Blanco (Restas) <span class="belt-desc">Restas con números hasta 12</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Blanco (Restas)</span>
+        <span class="belt-desc">Restas con números hasta 12</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="blanco-restas">🥋</div>
     </button>
     <button class="belt-btn" data-level="naranja">
-      <span class="belt-text">Cinturón Naranja <span class="belt-desc">Sumas hasta 60 y restas hasta 40</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#f97316" stroke="#ea580c" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#f97316" stroke="#ea580c" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Naranja</span>
+        <span class="belt-desc">Sumas hasta 60 y restas hasta 40</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="naranja">🥋</div>
     </button>
     <button class="belt-btn" data-level="azul">
-      <span class="belt-text">Cinturón Azul <span class="belt-desc">Cuatro operaciones y tablas del 2 al 10</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#0ea5e9" stroke="#0284c7" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#0ea5e9" stroke="#0284c7" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#0ea5e9" stroke="#0284c7" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#0ea5e9" stroke="#0284c7" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Azul</span>
+        <span class="belt-desc">Cuatro operaciones y tablas del 2 al 10</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="azul">🥋</div>
     </button>
     <button class="belt-btn" data-level="negro">
-      <span class="belt-text">Cinturón Negro <span class="belt-desc">Cuatro operaciones y tablas del 3 al 12</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#1e1b4b" stroke="#4338ca" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#1e1b4b" stroke="#4338ca" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#1e1b4b" stroke="#4338ca" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#1e1b4b" stroke="#4338ca" stroke-width="1.5"/>
+          <rect x="18" y="37" width="6" height="2" fill="#fbbf24"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Negro</span>
+        <span class="belt-desc">Cuatro operaciones y tablas del 3 al 12</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="negro">🥋</div>
     </button>
   </div>
 
   <!-- ÁREA DEL JUEGO -->
   <div class="game-area" id="game-area">
     <div class="game-header">
-      <button class="change-level-btn" onclick="showLevelSelector()">🔄 Cambiar cinturón</button>
+      <button class="change-level-btn" onclick="showLevelSelector()">🥋 Niveles</button>
+      <span class="active-level" id="header-belt-name">🥋 Cinturón Blanco</span>
       <div class="score-board">
-        <span>✅ <span id="score">0</span></span>
-        <span>🔥 <span id="streak">0</span></span>
+        <span>✅ <b id="score">0</b></span>
+        <span>🔥 <b id="streak">0</b></span>
       </div>
     </div>
-    
+
+    <!-- Indicador de Ronda de 8 preguntas -->
+    <div class="round-progress-container" id="round-progress-indicator"></div>
+
     <div class="game-layout">
       <!-- Problema -->
       <div class="problem-section">
@@ -263,7 +244,7 @@
         <div class="answer-display focus" id="answer"></div>
         <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
       </div>
-      
+
       <!-- Teclado Virtual -->
       <div class="keypad">
         <button class="key-btn" onclick="pressKey(1)">1</button>
@@ -289,8 +270,8 @@
     let score = 0;
     let streak = 0;
     let isWaiting = false;
+    let roundManager = null;
 
-    // Elementos del DOM
     const levelSelector = document.getElementById('level-selector');
     const gameArea = document.getElementById('game-area');
     const equationEl = document.getElementById('equation');
@@ -300,40 +281,80 @@
     const streakEl = document.getElementById('streak');
     const beltBtns = document.querySelectorAll('.belt-btn');
     const headerTexts = document.querySelector('.header');
+    const headerBeltName = document.getElementById('header-belt-name');
 
-    // Cambiar de vista
+    const beltNames = {
+      'blanco-sumas': 'Blanco (Sumas)',
+      'blanco-restas': 'Blanco (Restas)',
+      'naranja': 'Cinturón Naranja',
+      'azul': 'Cinturón Azul',
+      'negro': 'Cinturón Negro'
+    };
+
     function showLevelSelector() {
       gameArea.classList.remove('active');
       levelSelector.style.display = 'flex';
       headerTexts.style.display = 'block';
+      refreshBeltStars();
     }
 
-    // Configuración al elegir nivel
+    function refreshBeltStars() {
+      if (!window.DojoProgress) return;
+      ['blanco-sumas', 'blanco-restas', 'naranja', 'azul', 'negro'].forEach(bId => {
+        const data = DojoProgress.getGameBelt('mental', bId);
+        const el = document.querySelector(`.belt-badge-stars[data-belt="${bId}"]`);
+        if (el) {
+          el.textContent = data.stars > 0 ? `🥋 ${'⭐'.repeat(data.stars)}` : '🥋';
+        }
+      });
+    }
+
     beltBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         currentLevel = btn.dataset.level;
+        headerBeltName.textContent = `🥋 ${beltNames[currentLevel] || currentLevel}`;
         levelSelector.style.display = 'none';
-        headerTexts.style.display = 'none'; 
+        headerTexts.style.display = 'none';
         gameArea.classList.add('active');
-        
+
         score = 0; streak = 0;
         updateScore();
         feedbackEl.textContent = '';
+
+        if (window.DojoRoundManager) {
+          roundManager = new DojoRoundManager({
+            gameId: 'mental',
+            beltId: currentLevel,
+            beltName: beltNames[currentLevel],
+            totalQuestions: 8,
+            onRestart: () => startNewRound()
+          });
+          roundManager.start();
+        }
+
         generateProblem();
       });
     });
 
-    // Lógica del teclado
+    function startNewRound() {
+      score = 0; streak = 0;
+      updateScore();
+      if (roundManager) roundManager.start();
+      generateProblem();
+    }
+
     function pressKey(num) {
       if (isWaiting) return;
-      if (userAnswerString.length < 4) { 
+      if (window.DojoAudio) DojoAudio.play('tap');
+      if (userAnswerString.length < 4) {
         userAnswerString += num;
         updateDisplay();
       }
     }
-    
+
     function clearAnswer() {
       if (isWaiting) return;
+      if (window.DojoAudio) DojoAudio.play('tap');
       userAnswerString = '';
       updateDisplay();
     }
@@ -351,17 +372,17 @@
       userAnswerString = '';
       updateDisplay();
       isWaiting = false;
-      
+
       if (currentLevel === 'blanco-sumas') {
         op = '+';
         a = randomInt(1, 10);
-        b = randomInt(1, 12 - a); 
+        b = randomInt(1, 12 - a);
         currentAnswer = a + b;
       }
       else if (currentLevel === 'blanco-restas') {
         op = '-';
         a = randomInt(2, 12);
-        b = randomInt(1, a); 
+        b = randomInt(1, a);
         currentAnswer = a - b;
       }
       else if (currentLevel === 'naranja') {
@@ -377,23 +398,23 @@
       else if (currentLevel === 'azul') {
         const ops = ['+', '-', 'x', '÷'];
         op = ops[randomInt(0, 3)];
-        if (op === '+') { a = randomInt(10, 50); b = randomInt(10, 50); currentAnswer = a + b; } 
-        else if (op === '-') { a = randomInt(20, 60); b = randomInt(5, a); currentAnswer = a - b; } 
-        else if (op === 'x') { a = randomInt(2, 10); b = randomInt(2, 10); currentAnswer = a * b; } 
+        if (op === '+') { a = randomInt(10, 50); b = randomInt(10, 50); currentAnswer = a + b; }
+        else if (op === '-') { a = randomInt(20, 60); b = randomInt(5, a); currentAnswer = a - b; }
+        else if (op === 'x') { a = randomInt(2, 10); b = randomInt(2, 10); currentAnswer = a * b; }
         else if (op === '÷') {
           b = randomInt(2, 10); currentAnswer = randomInt(2, 10);
-          a = b * currentAnswer; 
+          a = b * currentAnswer;
         }
       }
       else if (currentLevel === 'negro') {
         const ops = ['+', '-', 'x', '÷'];
         op = ops[randomInt(0, 3)];
-        if (op === '+') { a = randomInt(20, 100); b = randomInt(20, 100); currentAnswer = a + b; } 
-        else if (op === '-') { a = randomInt(30, 120); b = randomInt(10, a); currentAnswer = a - b; } 
-        else if (op === 'x') { a = randomInt(3, 12); b = randomInt(3, 12); currentAnswer = a * b; } 
+        if (op === '+') { a = randomInt(20, 100); b = randomInt(20, 100); currentAnswer = a + b; }
+        else if (op === '-') { a = randomInt(30, 120); b = randomInt(10, a); currentAnswer = a - b; }
+        else if (op === 'x') { a = randomInt(3, 12); b = randomInt(3, 12); currentAnswer = a * b; }
         else if (op === '÷') {
           b = randomInt(3, 12); currentAnswer = randomInt(3, 15);
-          a = b * currentAnswer; 
+          a = b * currentAnswer;
         }
       }
 
@@ -402,30 +423,42 @@
 
     function checkAnswer() {
       if (userAnswerString === '' || isWaiting) return;
-      isWaiting = true; 
-      
-      const userAnswer = parseInt(userAnswerString);
+      isWaiting = true;
 
-      if (userAnswer === currentAnswer) {
+      const userAnswer = parseInt(userAnswerString, 10);
+      const isCorrect = (userAnswer === currentAnswer);
+
+      if (isCorrect) {
         score++; streak++;
-        feedbackEl.textContent = '¡Genial! ✨';
+        feedbackEl.textContent = '¡Rayo certero! ✨⚡';
         feedbackEl.className = 'feedback correct';
         updateScore();
-        setTimeout(() => {
-          feedbackEl.textContent = '';
-          generateProblem();
-        }, 1000);
+
+        if (window.DojoAudio) DojoAudio.play('correct');
+        if (window.DojoFX) DojoFX.sparkle(answerDisplay);
+
+        const finished = roundManager ? roundManager.recordAnswer(true) : false;
+
+        if (!finished) {
+          setTimeout(() => {
+            feedbackEl.textContent = '';
+            generateProblem();
+          }, 900);
+        }
       } else {
         streak = 0;
         feedbackEl.textContent = `¡Casi! Era ${currentAnswer}`;
         feedbackEl.className = 'feedback wrong';
         updateScore();
+
+        if (window.DojoAudio) DojoAudio.play('wrong');
+
         setTimeout(() => {
           feedbackEl.textContent = '';
           userAnswerString = '';
           updateDisplay();
           isWaiting = false;
-        }, 1800);
+        }, 1400);
       }
     }
 
@@ -434,10 +467,10 @@
       streakEl.textContent = streak;
     }
 
-    // Permitir teclado físico (PC/Mac)
+    // Soporte teclado físico
     document.addEventListener('keydown', (e) => {
       if (!gameArea.classList.contains('active') || isWaiting) return;
-      
+
       if (e.key >= '0' && e.key <= '9') {
         pressKey(e.key);
       } else if (e.key === 'Backspace') {
@@ -450,7 +483,9 @@
       }
     });
 
-
+    document.addEventListener('DOMContentLoaded', () => {
+      refreshBeltStars();
+    });
   </script>
 </body>
 </html>

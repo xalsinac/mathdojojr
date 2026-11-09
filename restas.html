@@ -12,289 +12,277 @@
       document.documentElement.setAttribute('data-theme', 'light');
     }
   </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Restas Valientes | Math Dojo Junior 🛡️</title>
+  <meta name="theme-color" content="#101116">
+  
   <link rel="stylesheet" href="ui.css">
+  <script src="dojo-audio.js" defer></script>
+  <script src="dojo-fx.js" defer></script>
+  <script src="dojo-progress.js" defer></script>
   <script src="accessibility.js" defer></script>
   <script src="theme.js" defer></script>
   <script src="practice-guide.js" defer></script>
   <script src="practice-help.js" defer></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Restas Valientes | Math Dojo Junior</title>
-  <meta name="theme-color" content="#0f172a">
-  
+
   <style>
-    :root {
-      --bg-primary: #0f172a;
-      --bg-card: #1e293b;
-      --text-main: #f8fafc;
-      --text-muted: #cbd5e1;
-      --border-color: #334155;
-      
-      --belt-blanco: #f8fafc;
-      --belt-naranja: #f97316;
-      --belt-azul: #3b82f6;
-      --belt-negro: #0f172a;
-    }
-    
-    [data-theme="light"] {
-      --bg-primary: #f0fdf4; 
-      --bg-card: #ffffff;
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-      --belt-negro: #1e293b;
-    }
-    
-    * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
-    
-    body {
-      margin: 0; padding: 0;
-      background-color: var(--bg-primary); color: var(--text-main);
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      transition: background-color 0.3s, color 0.3s;
-      overflow-x: hidden;
-    }
-
-    /* BARRA SUPERIOR */
-    .top-nav {
-      width: 100%; max-width: 800px;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 1rem 1.5rem;
-    }
-    
-    .btn-nav {
-      background: var(--bg-card); border: 2px solid var(--border-color);
-      border-radius: 50px; cursor: pointer; padding: 0.6rem 1rem;
-      font-size: 1.2rem; color: var(--text-main);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      text-decoration: none; font-weight: bold;
-      transition: transform 0.15s;
-    }
-    .btn-nav:active { transform: scale(0.9); }
-
-    .header { text-align: center; margin-bottom: 1.5rem; }
-    .header h1 { font-size: clamp(2rem, 6vw, 2.5rem); margin: 0; color: #ef4444; }
-    .header p { color: var(--text-muted); margin: 0.5rem 0 0 0; font-size: 1.1rem; }
-
-    /* SELECTOR DE CINTURONES */
-    .level-selector {
-      width: 90%; max-width: 400px;
-      display: flex; flex-direction: column; gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .belt-btn {
-      width: 100%;
-      padding: 1.2rem; border-radius: 20px; border: 4px solid;
-      font-size: 1.3rem; font-weight: 800; cursor: pointer;
-      background: var(--bg-card); color: var(--text-main);
-      display: flex; align-items: center; justify-content: center;
-      text-align: center;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
-    .belt-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    
-    .belt-btn[data-level="blanco"] { border-color: #cbd5e1; }
-    .belt-btn[data-level="naranja"] { border-color: var(--belt-naranja); }
-    .belt-btn[data-level="azul"] { border-color: var(--belt-azul); }
-    .belt-btn[data-level="negro"] { border-color: var(--belt-negro); }
-    
-    .belt-text { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; }
-    .belt-desc { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-top: 0.3rem; }
-
-    /* ÁREA DEL JUEGO */
     .game-area {
-      display: none; 
-      width: 96%; max-width: 800px;
-      flex-direction: column; align-items: center;
+      display: none;
+      width: min(96%, 680px);
+      flex-direction: column;
+      align-items: center;
     }
     .game-area.active { display: flex; }
-
-    .game-header {
-      width: 100%; display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 1rem; padding: 0 1rem;
-    }
-    .change-level-btn {
-      background: none; border: none; color: var(--belt-naranja);
-      font-weight: bold; font-size: 1rem; cursor: pointer;
-      text-decoration: underline; padding: 0;
-    }
-    
-    .score-board {
-      font-size: 1.3rem; font-weight: bold; color: var(--text-muted);
-      display: flex; gap: 1rem;
-    }
 
     .game-layout {
       width: 100%;
       background: var(--bg-card);
-      border: 3px solid var(--border-color);
-      border-radius: 24px;
-      padding: 1.5rem 1rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      display: flex; flex-direction: column; gap: 2rem; align-items: center;
+      border: 2px solid var(--border-card);
+      border-radius: 28px;
+      padding: 1.4rem 1rem 1.6rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+      align-items: center;
     }
 
-    /* DISEÑO DE LA RESTA VERTICAL */
     .problem-section {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      flex: 1; width: 100%; overflow-x: auto; padding: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      overflow-x: auto;
+      padding: 0.5rem 0;
     }
-    
+
     .sum-wrapper {
       display: inline-flex;
       flex-direction: column;
       align-items: flex-end;
-      padding-left: 2.5rem; /* Espacio para el signo '-' */
+      padding-left: 2.5rem;
+      position: relative;
     }
 
     .sum-row {
-      display: flex; gap: 0.3rem; position: relative; margin-bottom: 0.4rem;
-    }
-
-    .carries-bottom {
-      margin-top: 0.2rem;
-      margin-bottom: 1rem;
+      display: flex;
+      gap: 0.35rem;
+      position: relative;
+      margin-bottom: 0.35rem;
     }
 
     .last-operand {
       border-bottom: 4px solid var(--text-main);
-      padding-bottom: 0.8rem;
+      padding-bottom: 0.7rem;
+      margin-bottom: 0.8rem;
     }
 
     .sign {
-      position: absolute; left: -2.5rem; bottom: 0.1rem;
-      font-size: 3.5rem; font-weight: 900; color: var(--text-main);
+      position: absolute;
+      left: -2.4rem;
+      bottom: 0.7rem;
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: #f43f5e;
+      line-height: 1;
     }
 
     .box {
-      width: 3rem; height: 3.5rem;
-      display: flex; justify-content: center; align-items: center;
-      font-size: 2.2rem; font-weight: 800;
-      border-radius: 8px;
-      transition: background-color 0.2s;
+      width: clamp(2.8rem, 8vw, 3.4rem);
+      height: clamp(3.2rem, 9vw, 3.8rem);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: clamp(2rem, 6vw, 2.5rem);
+      font-weight: 800;
+      border-radius: 12px;
+      transition: background-color 0.15s;
     }
-    
+
     .empty { background: transparent; }
-    .carry-empty { width: 3rem; height: 2.2rem; } /* Placeholder para alinear las llevadas */
     .digit { color: var(--text-main); }
-    
-    /* Resaltador de columna activa (Blanco y Naranja) */
+
     .box.col-highlight {
-      background-color: rgba(56, 189, 248, 0.15);
+      background-color: rgba(56, 189, 248, 0.18);
     }
     [data-theme="light"] .box.col-highlight {
-      background-color: rgba(59, 130, 246, 0.15);
+      background-color: rgba(59, 130, 246, 0.16);
     }
-    
+
     .sum-input {
-      background: var(--bg-card);
+      background: var(--bg-surface);
       border: 2px solid var(--border-color);
-      border-radius: 10px;
+      border-radius: 12px;
       color: var(--text-main);
-      text-align: center; cursor: pointer;
-      outline: none; caret-color: transparent; 
-      font-family: inherit; font-size: 2.2rem; font-weight: 800;
-      transition: border-color 0.15s, box-shadow 0.15s, background-color 0.2s;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
+      caret-color: transparent;
+      font-size: clamp(2rem, 6vw, 2.5rem);
+      font-weight: 800;
+      transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
     }
-    
+
     .sum-input.focus {
       border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+      background: var(--bg-card);
     }
 
-    .carry-input {
-      width: 2.2rem; height: 2.2rem; font-size: 1.2rem; margin: 0 0.4rem;
-      border-color: #cbd5e1; color: #ef4444; border-radius: 8px;
+    .borrow-input {
+      width: clamp(2rem, 6vw, 2.5rem);
+      height: clamp(2rem, 6vw, 2.5rem);
+      font-size: 1.35rem;
+      margin: 0 0.35rem;
+      border-color: rgba(244, 63, 94, 0.5);
+      color: var(--accent-rose);
+      border-radius: 10px;
     }
-    [data-theme="light"] .carry-input { border-color: #94a3b8; color: #dc2626; }
-
-    /* TECLADO VIRTUAL */
-    .keypad {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem;
-      width: 100%; max-width: 320px;
-    }
-    .key-btn {
-      background: var(--bg-primary); border: 2px solid var(--border-color);
-      border-radius: 16px; font-size: 2rem; font-weight: bold; color: var(--text-main);
-      padding: 0.8rem 0; cursor: pointer; box-shadow: 0 5px 0 var(--border-color);
-      transition: transform 0.1s, box-shadow 0.1s; user-select: none;
-    }
-    .key-btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--border-color); }
-    
-    .key-action { background: #f97316; color: white; border-color: #c2410c; box-shadow: 0 5px 0 #c2410c; font-size: 1.4rem;}
-    .key-action:active { box-shadow: 0 0 0 #c2410c; }
-    
-    .key-ok { background: #10b981; color: white; border-color: #059669; box-shadow: 0 5px 0 #059669; font-size: 1.4rem;}
-    .key-ok:active { box-shadow: 0 0 0 #059669; }
 
     .feedback {
-      height: 2.5rem; font-size: 1.5rem; font-weight: bold;
-      display: flex; align-items: center; justify-content: center;
-      text-align: center; margin-top: 1rem; width: 100%;
+      min-height: 2.2rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-top: 0.6rem;
+      width: 100%;
     }
-    .feedback.correct { color: #10b981; animation: bounce 0.5s; }
-    .feedback.wrong { color: #ef4444; animation: shake 0.4s; }
+    .feedback.correct { color: #10b981; animation: bounce 0.4s; }
+    .feedback.wrong { color: #f43f5e; animation: shake 0.35s; }
 
-    @media (min-width: 650px) {
-      .game-layout { flex-direction: row; justify-content: space-around; padding: 2rem; }
-      .problem-section { flex: 1; border-right: 3px dashed var(--border-color); padding-right: 1rem; }
-      .keypad { flex: 0.8; max-width: 280px; }
-      .header h1 { font-size: 3rem; }
+    @media (min-width: 680px) {
+      .game-layout {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 2rem 1.5rem;
+      }
+      .problem-section {
+        flex: 1.2;
+        border-right: 2px dashed var(--border-color);
+        padding-right: 1.5rem;
+      }
+      .keypad {
+        flex: 0.9;
+        max-width: 290px;
+      }
     }
-
-    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
-    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 <body>
+  <!-- Barra Superior -->
   <div class="top-nav">
     <a href="index.html" class="btn-nav">⬅️ Inicio</a>
-    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
-      <span id="theme-icon">☀️</span>
-    </button>
+    <div class="top-nav-group">
+      <button class="sound-toggle-btn" type="button" onclick="DojoAudio.toggleMute()" aria-label="Silenciar o activar sonido" title="Sonido">
+        <span class="sound-icon">🔊</span>
+      </button>
+      <button class="theme-toggle-btn" type="button" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
+        <span id="theme-icon">☀️</span>
+      </button>
+    </div>
   </div>
 
   <div class="header">
-    <h1>🦸‍♂️ Restas Valientes</h1>
-    <p>Coloca los números y vigila si tienes que pedir prestado</p>
+    <h1 style="color: #f43f5e;">🛡️ Restas Valientes</h1>
+    <p>Resta por columnas, domina los préstamos y supera tu ronda</p>
   </div>
 
   <!-- SELECTOR DE CINTURONES -->
   <div class="level-selector" id="level-selector">
     <button class="belt-btn" data-level="blanco">
-      <span class="belt-text">Cinturón Blanco <span class="belt-desc">2 cifras (Sin pedir prestado)</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Blanco</span>
+        <span class="belt-desc">2 cifras sin préstamos (calentamiento)</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="blanco">🥋</div>
     </button>
     <button class="belt-btn" data-level="naranja">
-      <span class="belt-text">Cinturón Naranja <span class="belt-desc">Dos números de 3 cifras, con al menos un préstamo</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#f97316" stroke="#ea580c" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#f97316" stroke="#ea580c" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Naranja</span>
+        <span class="belt-desc">3 cifras con préstamos en unidades y decenas</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="naranja">🥋</div>
     </button>
     <button class="belt-btn" data-level="azul">
-      <span class="belt-text">Cinturón Azul <span class="belt-desc">Dos números de 4 cifras, con préstamo</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#0ea5e9" stroke="#0284c7" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#0ea5e9" stroke="#0284c7" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#0ea5e9" stroke="#0284c7" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#0ea5e9" stroke="#0284c7" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Azul</span>
+        <span class="belt-desc">Restas de 4 cifras</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="azul">🥋</div>
     </button>
     <button class="belt-btn" data-level="negro">
-      <span class="belt-text">Cinturón Negro <span class="belt-desc">Dos números de 5 cifras, con préstamo</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#1e1b4b" stroke="#4338ca" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#1e1b4b" stroke="#4338ca" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#1e1b4b" stroke="#4338ca" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#1e1b4b" stroke="#4338ca" stroke-width="1.5"/>
+          <rect x="18" y="37" width="6" height="2" fill="#fbbf24"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Negro</span>
+        <span class="belt-desc">Restas de 5 cifras con ceros intermedios</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="negro">🥋</div>
     </button>
   </div>
 
   <!-- ÁREA DEL JUEGO -->
   <div class="game-area" id="game-area">
     <div class="game-header">
-      <button class="change-level-btn" onclick="showLevelSelector()">🔄 Cambiar cinturón</button>
+      <button class="change-level-btn" onclick="showLevelSelector()">🥋 Niveles</button>
+      <span class="active-level" id="header-belt-name">🥋 Cinturón Blanco</span>
       <div class="score-board">
-        <span>✅ <span id="score">0</span></span>
-        <span>🔥 <span id="streak">0</span></span>
+        <span>✅ <b id="score">0</b></span>
+        <span>🔥 <b id="streak">0</b></span>
       </div>
     </div>
-    
+
+    <!-- Indicador de Ronda de 8 preguntas -->
+    <div class="round-progress-container" id="round-progress-indicator"></div>
+
     <div class="game-layout">
+      <!-- Sección del Problema -->
       <div class="problem-section">
         <div id="sum-container"></div>
         <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
       </div>
-      
+
+      <!-- Teclado Virtual Táctil -->
       <div class="keypad">
         <button class="key-btn" onclick="pressKey(1)">1</button>
         <button class="key-btn" onclick="pressKey(2)">2</button>
@@ -320,6 +308,7 @@
     let streak = 0;
     let isWaiting = false;
     let focusedInput = null;
+    let roundManager = null;
 
     const levelSelector = document.getElementById('level-selector');
     const gameArea = document.getElementById('game-area');
@@ -329,28 +318,67 @@
     const streakEl = document.getElementById('streak');
     const beltBtns = document.querySelectorAll('.belt-btn');
     const headerTexts = document.querySelector('.header');
+    const headerBeltName = document.getElementById('header-belt-name');
+
+    const beltNames = {
+      blanco: 'Cinturón Blanco',
+      naranja: 'Cinturón Naranja',
+      azul: 'Cinturón Azul',
+      negro: 'Cinturón Negro'
+    };
 
     function showLevelSelector() {
       gameArea.classList.remove('active');
       levelSelector.style.display = 'flex';
       headerTexts.style.display = 'block';
+      refreshBeltStars();
+    }
+
+    function refreshBeltStars() {
+      if (!window.DojoProgress) return;
+      ['blanco', 'naranja', 'azul', 'negro'].forEach(bId => {
+        const data = DojoProgress.getGameBelt('restas', bId);
+        const el = document.querySelector(`.belt-badge-stars[data-belt="${bId}"]`);
+        if (el) {
+          el.textContent = data.stars > 0 ? `🥋 ${'⭐'.repeat(data.stars)}` : '🥋';
+        }
+      });
     }
 
     beltBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         currentLevel = btn.dataset.level;
+        headerBeltName.textContent = `🥋 ${beltNames[currentLevel] || currentLevel}`;
         levelSelector.style.display = 'none';
-        headerTexts.style.display = 'none'; 
+        headerTexts.style.display = 'none';
         gameArea.classList.add('active');
-        
+
         score = 0; streak = 0;
         updateScore();
         feedbackEl.textContent = '';
+
+        if (window.DojoRoundManager) {
+          roundManager = new DojoRoundManager({
+            gameId: 'restas',
+            beltId: currentLevel,
+            beltName: beltNames[currentLevel],
+            totalQuestions: 8,
+            onRestart: () => startNewRound()
+          });
+          roundManager.start();
+        }
+
         generateProblem();
       });
     });
 
-    // Lógica de Foco e Iluminación de Columna
+    function startNewRound() {
+      score = 0; streak = 0;
+      updateScore();
+      if (roundManager) roundManager.start();
+      generateProblem();
+    }
+
     window.setFocus = function(element) {
       if (isWaiting) return;
       if (focusedInput) focusedInput.classList.remove('focus');
@@ -363,8 +391,8 @@
         const colMatch = element.dataset.id.match(/\d+/);
         if (colMatch) {
           const colFromRight = parseInt(colMatch[0]);
-          const numCols = String(operands[0]).length; 
-          const childIndex = numCols - colFromRight; 
+          const numCols = String(operands[0]).length;
+          const childIndex = numCols - colFromRight;
 
           const rows = document.querySelectorAll('.sum-row');
           rows.forEach(row => {
@@ -379,18 +407,20 @@
 
     function pressKey(num) {
       if (isWaiting || !focusedInput) return;
+      if (window.DojoAudio) DojoAudio.play('tap');
+
       focusedInput.value = num;
-      
-      // Auto-avance
+
       if (focusedInput.classList.contains('result-input')) {
         let currentId = parseInt(focusedInput.dataset.id.replace('r', ''));
         let nextInput = document.querySelector(`[data-id="r${currentId + 1}"]`);
         if (nextInput) setFocus(nextInput);
       }
     }
-    
+
     function clearInput() {
       if (isWaiting || !focusedInput) return;
+      if (window.DojoAudio) DojoAudio.play('tap');
       focusedInput.value = '';
     }
 
@@ -401,12 +431,12 @@
     function generateProblem() {
       operands = [];
       isWaiting = false;
-      
+
       if (currentLevel === 'blanco') {
         let t1 = randomInt(2, 9);
-        let t2 = randomInt(1, t1 - 1); 
+        let t2 = randomInt(1, t1 - 1);
         let u1 = randomInt(1, 9);
-        let u2 = randomInt(0, u1); 
+        let u2 = randomInt(0, u1);
         operands.push(t1 * 10 + u1);
         operands.push(t2 * 10 + u2);
       }
@@ -437,76 +467,87 @@
       let html = '<div class="sum-wrapper">';
       const numCols = String(operands[0]).length;
 
-      // MINUENDO Y SUSTRAENDO
-      operands.forEach((op, index) => {
-        let rowClass = 'sum-row';
-        html += `<div class="${rowClass}">`;
-        
-        if (index === 1) html += `<div class="sign">-</div>`;
-
-        let opStr = String(op);
-        let padding = numCols - opStr.length;
-        
-        for(let i=0; i<padding; i++) html += `<div class="box empty"></div>`;
-        for(let i=0; i<opStr.length; i++) {
-          html += `<div class="box digit">${opStr[i]}</div>`;
-        }
-        html += `</div>`;
-      });
-
-      // FILA DE PRESTADAS (Abajo del sustraendo)
-      html += `<div class="sum-row carries-bottom last-operand">`;
-      for(let c = numCols; c >= 1; c--) {
-        // En este método, la columna 1 (unidades) nunca recibe un "+1" de prestada
-        if(c === 1 || currentLevel === 'blanco') {
-          html += `<div class="box empty carry-empty"></div>`; 
+      // Fila superior (préstamos en minuendo)
+      html += `<div class="sum-row carries">`;
+      for (let c = numCols; c >= 1; c--) {
+        if (currentLevel === 'blanco') {
+          html += `<div class="box empty"></div>`;
         } else {
-          html += `<input type="text" class="box sum-input carry-input" readonly data-id="c${c}" onclick="setFocus(this)">`;
+          html += `<input type="text" class="box sum-input borrow-input" readonly data-id="c${c}" onclick="setFocus(this)" aria-label="Préstamo columna ${c}">`;
         }
       }
       html += `</div>`;
 
-      // FILA RESULTADO
+      // Minuendo
+      html += `<div class="sum-row">`;
+      let opStr1 = String(operands[0]);
+      for (let i = 0; i < opStr1.length; i++) {
+        html += `<div class="box digit">${opStr1[i]}</div>`;
+      }
+      html += `</div>`;
+
+      // Sustraendo con signo '-'
+      html += `<div class="sum-row last-operand">`;
+      html += `<div class="sign">−</div>`;
+      let opStr2 = String(operands[1]);
+      let padding = numCols - opStr2.length;
+      for (let i = 0; i < padding; i++) html += `<div class="box empty"></div>`;
+      for (let i = 0; i < opStr2.length; i++) {
+        html += `<div class="box digit">${opStr2[i]}</div>`;
+      }
+      html += `</div>`;
+
+      // Fila de resultado
       html += `<div class="sum-row result-row">`;
-      for(let c = numCols; c >= 1; c--) {
-        html += `<input type="text" class="box sum-input result-input" readonly data-id="r${c}" onclick="setFocus(this)">`;
+      for (let c = numCols; c >= 1; c--) {
+        html += `<input type="text" class="box sum-input result-input" readonly data-id="r${c}" onclick="setFocus(this)" aria-label="Resultado columna ${c}">`;
       }
       html += `</div></div>`;
 
       sumContainer.innerHTML = html;
-      
+
       const unitsBox = document.querySelector('[data-id="r1"]');
       if (unitsBox) setFocus(unitsBox);
     }
 
     function checkAnswer() {
       if (isWaiting) return;
-      isWaiting = true; 
-      
+
       let userStr = '';
       const numCols = String(operands[0]).length;
-      for(let c = numCols; c >= 1; c--) {
+      for (let c = numCols; c >= 1; c--) {
         const val = document.querySelector(`[data-id="r${c}"]`).value;
         userStr += (val === '' ? '0' : val);
       }
-      const userSum = parseInt(userStr, 10);
+      const userResult = parseInt(userStr, 10);
+      const isCorrect = (userResult === expectedResult);
 
-      if (userSum === expectedResult) {
+      if (isCorrect) {
+        isWaiting = true;
         score++; streak++;
-        feedbackEl.textContent = '¡Resta correcta! 🦸‍♂️';
+        feedbackEl.textContent = '¡Resta valiente correcta! 🛡️✨';
         feedbackEl.className = 'feedback correct';
         updateScore();
-        setTimeout(() => {
-          feedbackEl.textContent = '';
-          generateProblem();
-        }, 1500);
+
+        if (window.DojoAudio) DojoAudio.play('correct');
+        if (window.DojoFX) DojoFX.sparkle(sumContainer);
+
+        const finished = roundManager ? roundManager.recordAnswer(true) : false;
+
+        if (!finished) {
+          setTimeout(() => {
+            feedbackEl.textContent = '';
+            generateProblem();
+          }, 1200);
+        }
       } else {
         streak = 0;
-        feedbackEl.textContent = 'Empieza por las unidades. Si arriba hay menos, tendrás que pedir prestado.';
+        feedbackEl.textContent = 'Si arriba hay menos, pide 1 prestado a la izquierda.';
         feedbackEl.className = 'feedback wrong';
         updateScore();
-        
-        isWaiting = false;
+
+        if (window.DojoAudio) DojoAudio.play('wrong');
+
         const unitsBox = document.querySelector('[data-id="r1"]');
         if (unitsBox) setFocus(unitsBox);
       }
@@ -522,7 +563,7 @@
         const name = column === 1 ? 'unidades' : column === 2 ? 'decenas' : column === 3 ? 'centenas' : `columna ${column}`;
         const entered = document.querySelector(`[data-id="r${column}"]`)?.value;
         if (top < bottom) {
-          if (entered !== String(top + 10 - bottom)) return `En ${name}, ${top} no alcanza para quitar ${bottom}. Pide 1 a la columna de la izquierda: aquí tendrás ${top + 10} − ${bottom}. Anota el préstamo en la fila inferior.`;
+          if (entered !== String(top + 10 - bottom)) return `En ${name}, ${top} no alcanza para quitar ${bottom}. Pide 1 a la izquierda: aquí tendrás ${top + 10} − ${bottom}. Anota el préstamo en la casilla superior.`;
           borrow = 1;
           continue;
         }
@@ -537,7 +578,6 @@
       streakEl.textContent = streak;
     }
 
-    // Teclado físico
     document.addEventListener('keydown', (e) => {
       if (!gameArea.classList.contains('active') || isWaiting) return;
       if (e.key >= '0' && e.key <= '9') {
@@ -549,7 +589,9 @@
       }
     });
 
-
+    document.addEventListener('DOMContentLoaded', () => {
+      refreshBeltStars();
+    });
   </script>
 </body>
 </html>

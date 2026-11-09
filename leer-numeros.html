@@ -11,13 +11,16 @@
     if (initialTheme === 'light') document.documentElement.setAttribute('data-theme', 'light');
   </script>
   <link rel="stylesheet" href="ui.css">
+  <script src="dojo-audio.js" defer></script>
+  <script src="dojo-fx.js" defer></script>
+  <script src="dojo-progress.js" defer></script>
   <script src="accessibility.js" defer></script>
   <script src="theme.js" defer></script>
   <script src="practice-guide.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0f172a">
-  <title>Lee Números | Math Dojo Junior</title>
+  <meta name="theme-color" content="#101116">
+  <title>Lee Números | Math Dojo Junior 🔢</title>
   <style>
     :root {
       --bg-primary: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc;
@@ -27,7 +30,7 @@
       --bg-primary: #f0fdf4; --bg-card: #fff; --text-main: #1e293b;
       --text-muted: #64748b; --border-color: #dbeafe;
     }
-    * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
+    * { box-sizing: border-box; font-family: var(--font-kids); }
     body {
       min-height: 100vh; margin: 0; padding: 0 0 2rem; overflow-x: hidden;
       display: flex; flex-direction: column; align-items: center;
@@ -85,16 +88,67 @@
 <body>
   <nav class="top-nav" aria-label="Navegación principal">
     <a href="index.html" class="btn-nav">⬅️ Inicio</a>
-    <button class="btn-nav" type="button" onclick="toggleTheme()" aria-label="Cambiar tema de color"><span id="theme-icon">☀️</span></button>
+    <div class="top-nav-group">
+      <button class="sound-toggle-btn" type="button" onclick="DojoAudio.toggleMute()" aria-label="Silenciar o activar sonido" title="Sonido">
+        <span class="sound-icon">🔊</span>
+      </button>
+      <button class="theme-toggle-btn" type="button" onclick="toggleTheme()" aria-label="Cambiar tema de color"><span id="theme-icon">☀️</span></button>
+    </div>
   </nav>
   <header class="header">
-    <h1>🔎 Lee Números</h1>
-    <p>Los números están por todas partes. ¡Vamos a leerlos!</p>
+    <h1 style="color: #0ea5e9;">🔍 Lee Números</h1>
+    <p>Descubre cómo se leen y escriben las cifras grandes en el Dojo</p>
   </header>
   <section class="level-selector" id="level-selector" aria-label="Elige cómo practicar">
-    <button class="belt-btn" data-level="blanco" type="button"><span class="belt-text">🥋 Cinturón Blanco<span class="belt-desc">Lee en voz alta números de hasta 2 cifras, con un adulto.</span></span></button>
-    <button class="belt-btn" data-level="naranja" type="button"><span class="belt-text">🟠 Cinturón Naranja<span class="belt-desc">Lee en voz alta números de hasta 4 cifras, con un adulto.</span></span></button>
-    <button class="belt-btn" data-level="negro" type="button"><span class="belt-text">⚫ Cinturón Negro<span class="belt-desc">Lee el número escrito con letras y elige su cifra.</span></span></button>
+    <button class="belt-btn" data-level="blanco" type="button">
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Blanco</span>
+        <span class="belt-desc">Lee en voz alta números de hasta 2 cifras</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="blanco">🥋</div>
+    </button>
+    <button class="belt-btn" data-level="naranja" type="button">
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#f97316" stroke="#ea580c" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#f97316" stroke="#ea580c" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Naranja</span>
+        <span class="belt-desc">Grandes cifras: millares y centenas (hasta 4 dígitos)</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="naranja">🥋</div>
+    </button>
+    <button class="belt-btn" data-level="negro" type="button">
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#1e1b4b" stroke="#4338ca" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#1e1b4b" stroke="#4338ca" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#1e1b4b" stroke="#4338ca" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#1e1b4b" stroke="#4338ca" stroke-width="1.5"/>
+          <rect x="18" y="37" width="6" height="2" fill="#fbbf24"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Negro</span>
+        <span class="belt-desc">Del nombre con letras a su cifra correcta</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="negro">🥋</div>
+    </button>
   </section>
   <main class="game-area" id="game-area">
     <div class="game-header">
@@ -202,6 +256,8 @@
       if (completed) return;
       if (value === answer) {
         completed = true; score++; streak++;
+        if (window.DojoAudio) DojoAudio.play('correct');
+        if (window.DojoFX) DojoFX.confetti(1200);
         button.classList.add('is-correct');
         optionsEl.querySelectorAll('button').forEach(option => option.disabled = true);
         feedbackEl.textContent = '¡Lo has leído y encontrado! ✨';
@@ -209,6 +265,7 @@
         scoreEl.textContent = score; streakEl.textContent = streak;
         nextBtn.hidden = false; nextBtn.focus();
       } else {
+        if (window.DojoAudio) DojoAudio.play('wrong');
         button.classList.add('is-wrong');
         feedbackEl.textContent = '¡Casi! Prueba otra opción. Puedes pedir una pista.';
         feedbackEl.className = 'feedback wrong';

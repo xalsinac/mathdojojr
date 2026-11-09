@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Dragón Mágico del Math Dojo">
+  <defs>
+    <linearGradient id="dragonSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="dragonHorn" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+    <linearGradient id="dragonHeadband" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#be185d"/>
+    </linearGradient>
+    <filter id="dragonShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Sombra base -->
+  <ellipse cx="64" cy="116" rx="36" ry="7" fill="#000" opacity="0.15"/>
+
+  <!-- Cuernos dorados curvados -->
+  <path d="M30 46 C22 36 18 20 28 12 C34 16 38 26 40 40 Z" fill="url(#dragonHorn)"/>
+  <path d="M98 46 C106 36 110 20 100 12 C94 16 90 26 88 40 Z" fill="url(#dragonHorn)"/>
+
+  <!-- Crestas / Espinas dorsales suaves en la coronilla -->
+  <path d="M64 16 L70 28 L58 28 Z" fill="#f43f5e"/>
+  <path d="M52 20 L58 30 L48 30 Z" fill="#f43f5e"/>
+  <path d="M76 20 L80 30 L70 30 Z" fill="#f43f5e"/>
+
+  <!-- Cabeza Principal de Dragón -->
+  <path d="M64 28 C34 28 22 46 22 70 C22 92 36 104 64 104 C92 104 106 92 106 70 C106 46 94 28 64 28 Z" fill="url(#dragonSkin)" filter="url(#dragonShadow)"/>
+
+  <!-- Hocico curvado frontal -->
+  <path d="M34 70 C28 80 36 94 48 98 C56 100 64 94 64 90 C64 94 72 100 80 98 C92 94 100 80 94 70 C88 62 76 66 64 68 C52 66 40 62 34 70 Z" fill="#cffafe"/>
+
+  <!-- Cinta de Karate / Hachimaki magenta -->
+  <path d="M22 51 C38 47 64 46 106 51 L105 61 C64 56 38 57 23 61 Z" fill="url(#dragonHeadband)"/>
+  <circle cx="64" cy="54" r="5" fill="#fef08a"/>
+  <!-- Nudo lateral de la cinta -->
+  <path d="M104 53 C112 48 118 52 116 60 C114 66 106 62 104 57 Z" fill="#db2777"/>
+  <path d="M105 56 C113 56 118 64 114 71 C111 76 104 70 104 63 Z" fill="#9d174d"/>
+
+  <!-- Ojos Grandes Expresivos de Dragón (Brillo mágico) -->
+  <ellipse cx="44" cy="72" rx="7.5" ry="9" fill="#164e63"/>
+  <ellipse cx="42" cy="69" rx="3.5" ry="4.5" fill="#ffffff"/>
+  <circle cx="47" cy="75" r="1.6" fill="#ffffff"/>
+
+  <!-- Ojo Derecho -->
+  <ellipse cx="84" cy="72" rx="7.5" ry="9" fill="#164e63"/>
+  <ellipse cx="82" cy="69" rx="3.5" ry="4.5" fill="#ffffff"/>
+  <circle cx="87" cy="75" r="1.6" fill="#ffffff"/>
+
+  <!-- Mejillas sonrosadas -->
+  <ellipse cx="32" cy="80" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.4"/>
+  <ellipse cx="96" cy="80" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.4"/>
+
+  <!-- Orificios nasales de dragón simpático -->
+  <ellipse cx="58" cy="78" rx="2.5" ry="3" fill="#0891b2"/>
+  <ellipse cx="70" cy="78" rx="2.5" ry="3" fill="#0891b2"/>
+
+  <!-- Sonrisa pícara con colmillito tierno -->
+  <path d="M56 86 Q64 92 72 86" fill="none" stroke="#164e63" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Pequeño diente / colmillo blanco -->
+  <polygon points="68,87 71,91 73,87" fill="#ffffff"/>
+</svg>

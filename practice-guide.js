@@ -43,6 +43,11 @@
       azul: ['Mueve las agujas', 'Para las 4:25, hora en el 4 y minutos en el 5', 'Arrastra una aguja o enfócala y usa las flechas del teclado.'],
       negro: ['La hora en catalán', '4:15 se dice «un quart de cinc»', 'En catalán se cuentan los cuartos hacia la hora que viene: 4:15 es un cuarto de cinco.'],
     },
+    'leer-numeros.html': {
+      blanco: ['Lee hasta 2 cifras', '47', 'Léelo con un adulto: cuatro decenas y siete unidades. Pulsa «Siguiente número» cuando lo hayáis leído.'],
+      naranja: ['Lee hasta 4 cifras', '3 482', 'Separa millares, centenas, decenas y unidades: 3 000 + 400 + 80 + 2. Léelo con un adulto y pasa al siguiente.'],
+      negro: ['Del nombre a la cifra', 'Trescientos cuarenta y dos → 342', 'Busca primero las centenas, después las decenas y al final las unidades. El botón de pista te puede ayudar si dudas.'],
+    },
   };
 
   const gameFile = location.pathname.split('/').pop() || 'index.html';

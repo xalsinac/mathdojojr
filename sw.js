@@ -1,5 +1,5 @@
 // Cambia la versión al publicar cambios para retirar el caché anterior.
-const CACHE_NAME = 'mathjr-cache-v13';
+const CACHE_NAME = 'mathjr-cache-v14';
 
 // Archivos básicos a guardar al instalar la app
 const urlsToCache = [
@@ -17,9 +17,15 @@ const urlsToCache = [
   './ui.css',
   './accessibility.js',
   './theme.js',
+  './avatar.js',
   './practice-guide.js',
   './practice-help.js',
   './fox-mark.svg',
+  './avatars/gato.svg',
+  './avatars/rana.svg',
+  './avatars/oso.svg',
+  './avatars/buho.svg',
+  './avatars/dragon.svg',
   './dojo-icons.svg',
   './icon-192.png',
   './icon-512.png'

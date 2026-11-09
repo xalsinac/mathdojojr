@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
   <script>
-    // Usamos una clave distinta en localStorage para no pisar el tema del Dojo original
     let initialTheme = new URLSearchParams(location.hash.slice(1)).get('mathjr-theme');
     if (!initialTheme) {
       const savedCookie = document.cookie.match(/(?:^|; )mathjr_theme=(light|dark)(?:;|$)/);
@@ -13,313 +12,574 @@
       document.documentElement.setAttribute('data-theme', 'light');
     }
   </script>
-  <link rel="stylesheet" href="ui.css">
-  <script src="accessibility.js" defer></script>
-  <script src="theme.js" defer></script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Math Dojo Junior 🦊</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Math Dojo Junior 🦊 · Mates para Primaria</title>
+  <meta name="description" content="Entrena cálculo mental, sumas, restas, multiplicaciones y retos de primaria con tu compañero del Dojo.">
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Math Dojo Jr">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#101116">
 
-  
+  <link rel="stylesheet" href="ui.css">
+  <script src="dojo-audio.js" defer></script>
+  <script src="dojo-fx.js" defer></script>
+  <script src="dojo-progress.js" defer></script>
+  <script src="accessibility.js" defer></script>
+  <script src="theme.js" defer></script>
+  <script src="avatar.js" defer></script>
+
   <style>
-    :root {
-      --bg-primary: #0f172a;
-      --bg-card: #1e293b;
-      --text-main: #f8fafc;
-      --text-muted: #cbd5e1;
-      --border-color: #334155;
-    }
-    [data-theme="light"] {
-      --bg-primary: #f0fdf4; 
-      --bg-card: #ffffff;
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-    }
-    * { box-sizing: border-box; }
-    
-    body {
-      margin: 0; padding: 0;
-      background-color: var(--bg-primary); color: var(--text-main);
-      font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, -apple-system, sans-serif; 
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      overflow-x: hidden;
-      overflow-y: auto;
-      transition: background-color 0.3s, color 0.3s;
-      padding-bottom: max(2rem, env(safe-area-inset-bottom));
-    }
-
-    .theme-toggle-btn {
-      position: absolute; top: 1.5rem; right: 1.5rem;
-      background: var(--bg-card); border: 2px solid var(--border-color);
-      border-radius: 50px; cursor: pointer; padding: 0.6rem 0.8rem;
-      font-size: 1.4rem; display: inline-flex; color: var(--text-main);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 100;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .theme-toggle-btn:active { transform: scale(0.85); }
-
+    /* Estilos específicos de la Portada */
     .header {
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      margin-top: max(3.5rem, env(safe-area-inset-top));
+      margin-top: max(5.5rem, calc(env(safe-area-inset-top) + 3.5rem));
       margin-bottom: 2rem;
       padding: 0 1.2rem;
-      max-width: 520px;
+      max-width: 580px;
       width: 94%;
     }
-    
+
+    .constellation-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #818cf8;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+    }
+
+    .header-avatar-wrap {
+      position: relative;
+      margin-bottom: 0.6rem;
+    }
+
     .header-icon {
-      width: 5.5rem;
+      width: clamp(5.2rem, 14vw, 6.5rem);
       height: auto;
-      margin-bottom: 0.5rem;
-      line-height: 1;
       animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 12px 24px rgba(99, 102, 241, 0.35));
     }
 
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
+    .header h1 {
+      font-size: clamp(2.3rem, 7.5vw, 3.4rem);
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .header h1 { 
-      font-size: clamp(2.2rem, 7vw, 3.2rem); 
-      margin: 0; 
-      font-weight: 900; 
-      letter-spacing: -1px; 
-      line-height: 1.1;
-      color: #3b82f6; 
+    [data-theme="light"] .header h1 {
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    [data-theme="light"] .header h1 { color: #2563eb; }
-    
-    .header p { 
-      color: var(--text-muted); 
-      font-size: clamp(1.1rem, 4vw, 1.3rem); 
-      margin: 0.5rem 0 0 0; 
-      font-weight: 600;
+
+    .header p {
+      color: var(--text-muted);
+      font-size: clamp(1.05rem, 3.8vw, 1.25rem);
+      margin: 0.6rem 0 0;
+      font-weight: 500;
     }
-    
-    /* REJILLA A DOBLE COLUMNA */
+
+    /* Cuadrícula de Juegos Responsiva */
     .games-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem; 
+      gap: 1.1rem;
       width: 94%;
-      max-width: 520px;
+      max-width: 580px;
+      margin-bottom: 2.5rem;
     }
-    
+
     .game-card {
-      background-color: var(--bg-card);
-      border: 3px solid var(--border-color); 
-      border-radius: 24px; 
-      padding: 1.5rem 0.8rem;
-      min-height: 150px;
+      background: var(--bg-card);
+      border: 2px solid var(--border-card);
+      border-radius: 26px;
+      padding: 1.4rem 1rem;
+      min-height: 160px;
       text-decoration: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      justify-content: center;
-      gap: 0.8rem;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+      justify-content: space-between;
+      gap: 0.6rem;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, border-color 0.2s;
       color: var(--text-main);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow-sm);
       position: relative;
-      overflow: hidden; 
+      overflow: hidden;
     }
-    .game-card:active { 
-      transform: scale(0.92); 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+    .game-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .game-card:active {
+      transform: scale(0.94);
+      box-shadow: var(--shadow-sm);
     }
 
     .game-icon {
-      font-size: 3.5rem; 
+      font-size: 3.2rem;
       line-height: 1;
-      position: relative;
-      z-index: 2;
-      color: #60a5fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
     }
-    .game-icon svg { width: 1em; height: 1em; display: block; }
+    .game-card:hover .game-icon {
+      transform: scale(1.08);
+    }
+    .game-icon svg {
+      width: 1em;
+      height: 1em;
+      display: block;
+    }
 
     .game-info {
       width: 100%;
-      position: relative;
-      z-index: 2;
     }
     .game-info h2 {
-      margin: 0 0 0.3rem 0;
-      font-size: clamp(1rem, 3.5vw, 1.25rem);
+      margin: 0 0 0.25rem;
+      font-size: clamp(1.05rem, 3.6vw, 1.3rem);
       font-weight: 800;
       line-height: 1.2;
     }
     .game-info p {
       margin: 0;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       color: var(--text-muted);
-      line-height: 1.2;
+      line-height: 1.3;
       font-weight: 500;
     }
 
-    /* TARJETA ESPECIAL (ANCHO COMPLETO) */
+    /* Insignia de progreso en cada tarjeta */
+    .card-belt-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.22rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+    .card-belt-badge.has-stars {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.35);
+      color: var(--accent-gold);
+    }
+
+    /* Tarjeta Promo a Math Universe / Mayor */
     .promo-card {
-      grid-column: 1 / -1; 
-      flex-direction: row; 
+      grid-column: 1 / -1;
+      flex-direction: row;
       text-align: left;
-      padding: 1.5rem;
-      background: linear-gradient(145deg, var(--bg-card) 40%, rgba(59, 130, 246, 0.15) 100%);
-      border-color: rgba(59, 130, 246, 0.5);
+      padding: 1.4rem 1.6rem;
+      background: linear-gradient(135deg, var(--bg-card) 30%, rgba(99, 102, 241, 0.14) 100%);
+      border-color: rgba(99, 102, 241, 0.4);
       border-radius: 28px;
       justify-content: flex-start;
       gap: 1.2rem;
-      margin-top: 1rem; 
+      margin-top: 0.5rem;
     }
-    .promo-card .game-icon {
-      font-size: 3rem;
+    .promo-card .game-icon { font-size: 2.8rem; color: #818cf8; }
+    .promo-card .game-info p { font-size: 0.92rem; margin-top: 0.3rem; }
+
+    /* Colores Temáticos por Juego */
+    .card-calculo { border-color: rgba(245, 158, 11, 0.4); }
+    .card-calculo h2, .card-calculo .game-icon { color: #f59e0b; }
+
+    .card-sumas { border-color: rgba(16, 185, 129, 0.4); }
+    .card-sumas h2, .card-sumas .game-icon { color: #10b981; }
+
+    .card-restas { border-color: rgba(244, 63, 94, 0.4); }
+    .card-restas h2, .card-restas .game-icon { color: #f43f5e; }
+
+    .card-multi { border-color: rgba(59, 130, 246, 0.4); }
+    .card-multi h2, .card-multi .game-icon { color: #3b82f6; }
+
+    .card-div { border-color: rgba(168, 85, 247, 0.4); }
+    .card-div h2, .card-div .game-icon { color: #a855f7; }
+
+    .card-formas { border-color: rgba(236, 72, 153, 0.4); }
+    .card-formas h2, .card-formas .game-icon { color: #ec4899; }
+
+    .card-reloj { border-color: rgba(20, 184, 166, 0.4); }
+    .card-reloj h2, .card-reloj .game-icon { color: #14b8a6; }
+
+    .card-numeros { border-color: rgba(14, 165, 233, 0.4); }
+    .card-numeros h2, .card-numeros .game-icon { color: #0ea5e9; }
+
+    /* Modal selector de avatar */
+    .avatar-picker {
+      width: min(92vw, 520px);
+      padding: 0;
+      border: 2px solid var(--border-card);
+      border-radius: 28px;
+      background: var(--bg-card);
+      color: var(--text-main);
+      box-shadow: var(--shadow-lg);
     }
-    .promo-card .game-info p {
-      font-size: 0.9rem;
-      margin-top: 0.4rem;
+    .avatar-picker::backdrop {
+      background: rgba(16, 17, 22, 0.75);
+      backdrop-filter: blur(6px);
+    }
+    .avatar-picker__content { padding: clamp(1.2rem, 5vw, 1.8rem); }
+    .avatar-picker h2 { margin: 0; font-size: clamp(1.4rem, 5vw, 1.8rem); color: #60a5fa; }
+    .avatar-picker__intro { margin: 0.35rem 0 1rem; color: var(--text-muted); font-size: 0.95rem; }
+    .avatar-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.65rem; }
+    .avatar-choice {
+      padding: 0.7rem 0.4rem;
+      border: 2px solid var(--border-color);
+      border-radius: 18px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .avatar-choice:active { transform: scale(0.94); }
+    .avatar-choice img { width: clamp(3rem, 12vw, 4.2rem); height: clamp(3rem, 12vw, 4.2rem); object-fit: contain; }
+    .avatar-choice[aria-pressed="true"] {
+      border-color: #6366f1;
+      background: rgba(99, 102, 241, 0.18);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    }
+    .avatar-picker__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+    .avatar-picker__status { margin: 0; color: var(--text-muted); font-weight: 600; font-size: 0.92rem; }
+    .avatar-picker__close {
+      padding: 0.6rem 1.1rem;
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
     }
 
-    /* Colores temáticos vivos */
-    .card-calculo { border-color: rgba(245, 158, 11, 0.6); }
-    .card-calculo h2 { color: #f59e0b; }
-    
-    .card-sumas { border-color: rgba(16, 185, 129, 0.6); }
-    .card-sumas h2 { color: #10b981; }
-
-    .card-restas { border-color: rgba(239, 68, 68, 0.6); }
-    .card-restas h2 { color: #ef4444; }
-
-    .card-multi { border-color: rgba(59, 130, 246, 0.6); }
-    .card-multi h2 { color: #3b82f6; }
-
-    .card-div { border-color: rgba(168, 85, 247, 0.6); }
-    .card-div h2 { color: #a855f7; }
-
-    .card-formas { border-color: rgba(236, 72, 153, 0.6); }
-    .card-formas h2 { color: #ec4899; }
-    
-    .card-reloj { border-color: rgba(20, 184, 166, 0.6); }
-    .card-reloj h2 { color: #14b8a6; }
-    .card-numeros { border-color: rgba(14, 165, 233, 0.65); }
-    .card-numeros h2 { color: #0ea5e9; }
-    .card-calculo .game-icon { color: #f59e0b; }
-    .card-sumas .game-icon { color: #10b981; }
-    .card-restas .game-icon { color: #ef4444; }
-    .card-multi .game-icon { color: #3b82f6; }
-    .card-div .game-icon { color: #a855f7; }
-    .card-formas .game-icon { color: #ec4899; }
-    .card-reloj .game-icon { color: #14b8a6; }
-    .card-numeros .game-icon { color: #0ea5e9; }
-    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
+    @media (max-width: 440px) {
+      .games-grid { gap: 0.75rem; }
+      .game-card { padding: 1.1rem 0.7rem; min-height: 145px; border-radius: 22px; }
+      .game-icon { font-size: 2.6rem; }
+      .promo-card { flex-direction: column; text-align: center; align-items: center; }
+      .promo-card .game-icon { font-size: 2.4rem; }
+    }
   </style>
 </head>
 <body>
-  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
-    <span id="theme-icon">☀️</span>
-  </button>
-
-  <div class="header">
-    <img class="header-icon" src="fox-mark.svg" alt="" aria-hidden="true">
-    <h1>Math Dojo <br>JUNIOR</h1>
-    <p>¡Aprende mates jugando!</p>
+  <!-- Controles Superiores: Avatar, Sonido y Tema -->
+  <div class="home-controls" role="group" aria-label="Personalización y ajustes">
+    <button class="sound-toggle-btn" type="button" onclick="DojoAudio.toggleMute()" aria-label="Silenciar o activar sonido" title="Sonido">
+      <span class="sound-icon">🔊</span>
+    </button>
+    <button class="avatar-open-btn" id="avatar-open" type="button" aria-label="Elegir avatar" aria-haspopup="dialog" aria-controls="avatar-dialog">
+      <img id="avatar-button-icon" src="fox-mark.svg" alt=""><span id="avatar-btn-label">Avatar</span>
+    </button>
+    <button class="theme-toggle-btn" type="button" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
+      <span id="theme-icon">☀️</span>
+    </button>
   </div>
 
+  <!-- Cabecera de Portada -->
+  <div class="header">
+    <span class="constellation-pill">🚀 Constelación Math Universe</span>
+    <div class="header-avatar-wrap">
+      <img class="header-icon" id="dojo-avatar" src="fox-mark.svg" alt="Compañero del Dojo">
+    </div>
+    <h1>Math Dojo<br>JUNIOR</h1>
+    <p>¡Aprende mates jugando y consigue tus cinturones!</p>
+  </div>
+
+  <!-- Selector Modal de Avatar -->
+  <dialog class="avatar-picker" id="avatar-dialog" aria-labelledby="avatar-title" aria-describedby="avatar-intro">
+    <div class="avatar-picker__content">
+      <h2 id="avatar-title">Elige tu compañero del Dojo</h2>
+      <p class="avatar-picker__intro" id="avatar-intro">Escoge el personaje que te acompañará y celebrará tus aciertos en cada reto.</p>
+      <div class="avatar-grid" id="avatar-grid" role="group" aria-label="Personajes disponibles"></div>
+      <div class="avatar-picker__footer">
+        <p class="avatar-picker__status" id="avatar-status" aria-live="polite">El zorro te espera.</p>
+        <button class="avatar-picker__close" type="button" id="avatar-close">Cerrar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Rejilla de Juegos con Nuevas Tarjetas e Iconos Ilustrados -->
   <div class="games-grid">
     <!-- Cálculo Mental (mental.html) -->
-    <a href="mental.html" class="game-card card-calculo">
-      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M36 5 14 35h15l-2 24 23-32H35z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    <a href="mental.html" class="game-card card-calculo" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+      <div class="game-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" fill="rgba(245, 158, 11, 0.15)"/>
+          <path d="M35 6 L17 32 H31 L25 58 L47 28 H33 Z" fill="url(#rayoGrad)" filter="drop-shadow(0 4px 8px rgba(245, 158, 11, 0.45))"/>
+          <circle cx="48" cy="16" r="2" fill="#fde68a"/>
+          <circle cx="16" cy="46" r="2.5" fill="#fde68a"/>
+          <path d="M44 42 L46 48 L52 50 L46 52 L44 58 L42 52 L36 50 L42 48 Z" fill="#fbbf24"/>
+          <defs>
+            <linearGradient id="rayoGrad" x1="17" y1="6" x2="47" y2="58" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#fde047"/>
+              <stop offset="1" stop-color="#d97706"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <div class="game-info">
         <h2>Rayo Mental</h2>
-        <p>Suma, resta, tablas y divisiones mentales</p>
+        <p>Cálculo rápido, reflejos y cinturones</p>
       </div>
+      <div class="card-belt-badge" data-game="mental">🥋 Desafío Dojo</div>
     </a>
 
     <!-- Sumas (sumas.html) -->
-    <a href="sumas.html" class="game-card card-sumas">
-      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M32 10v44M10 32h44" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></svg></div>
+    <a href="sumas.html" class="game-card card-sumas" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+      <div class="game-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" fill="rgba(16, 185, 129, 0.15)"/>
+          <path d="M32 8 L54 18 V34 C54 46 44 54 32 58 C20 54 10 46 10 34 V18 Z" fill="url(#sumasGrad)" stroke="#34d399" stroke-width="2.5" filter="drop-shadow(0 4px 8px rgba(16, 185, 129, 0.35))"/>
+          <path d="M32 20 V44 M20 32 H44" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="20" cy="18" r="2" fill="#a7f3d0"/>
+          <circle cx="44" cy="18" r="2" fill="#a7f3d0"/>
+          <defs>
+            <linearGradient id="sumasGrad" x1="10" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#34d399"/>
+              <stop offset="1" stop-color="#059669"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <div class="game-info">
         <h2>Súper Sumas</h2>
-        <p>Suma por columnas, paso a paso</p>
+        <p>Suma por columnas y llevadas paso a paso</p>
       </div>
+      <div class="card-belt-badge" data-game="sumas">🥋 Desafío Dojo</div>
     </a>
 
-    <!-- Restas (restas.html) -->
-    <a href="restas.html" class="game-card card-restas">
-      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M11 32h42" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><circle cx="32" cy="32" r="25" fill="none" stroke="currentColor" stroke-width="4"/></svg></div>
+    <!-- Restas Valientes (restas.html) -->
+    <a href="restas.html" class="game-card card-restas" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+      <div class="game-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" fill="rgba(244, 63, 94, 0.15)"/>
+          <!-- Escudo de caballero protector -->
+          <path d="M32 7 C44 7 52 13 52 23 C52 42 32 57 32 57 C32 57 12 42 12 23 C12 13 20 7 32 7 Z" fill="url(#restasGrad)" stroke="#fb7185" stroke-width="2.5" filter="drop-shadow(0 4px 10px rgba(244, 63, 94, 0.35))"/>
+          <!-- Corona dorada superior -->
+          <path d="M25 13 L32 9 L39 13 L37 17 H27 Z" fill="#fde047"/>
+          <!-- Espada / Barra luminosa de resta -->
+          <rect x="18" y="27" width="28" height="8" rx="4" fill="#ffffff" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"/>
+          <circle cx="42" cy="40" r="2" fill="#fecdd3"/>
+          <circle cx="22" cy="40" r="2" fill="#fecdd3"/>
+          <defs>
+            <linearGradient id="restasGrad" x1="12" y1="7" x2="52" y2="57" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#fb7185"/>
+              <stop offset="1" stop-color="#be123c"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <div class="game-info">
         <h2>Restas Valientes</h2>
         <p>Resta por columnas y préstamos</p>
       </div>
+      <div class="card-belt-badge" data-game="restas">🥋 Desafío Dojo</div>
     </a>
 
     <!-- Multiplicaciones (multiplicaciones.html) -->
-    <a href="multiplicaciones.html" class="game-card card-multi">
-      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="m17 17 30 30M47 17 17 47" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></svg></div>
+    <a href="multiplicaciones.html" class="game-card card-multi" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+      <div class="game-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" fill="rgba(99, 102, 241, 0.15)"/>
+          <!-- Varita mágica -->
+          <line x1="12" y1="52" x2="34" y2="30" stroke="#a5b4fc" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="34" cy="30" r="5" fill="#fde047" stroke="#ca8a04" stroke-width="1.5"/>
+          <!-- Símbolo X mágico tridimensional -->
+          <path d="M38 14 L50 26 M50 14 L38 26" stroke="#818cf8" stroke-width="6.5" stroke-linecap="round"/>
+          <path d="M38 14 L50 26 M50 14 L38 26" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M22 17 L24 21 L28 23 L24 25 L22 29 L20 25 L16 23 L20 21 Z" fill="#fde047"/>
+          <circle cx="52" cy="38" r="2" fill="#c7d2fe"/>
+          <circle cx="44" cy="46" r="2.5" fill="#fbcfe8"/>
+        </svg>
+      </div>
       <div class="game-info">
         <h2>Magia x Tablas</h2>
         <p>Tablas y multiplicación en columna</p>
       </div>
+      <div class="card-belt-badge" data-game="multi">🥋 Desafío Dojo</div>
     </a>
 
     <!-- Divisiones (divisiones.html) -->
-    <a href="divisiones.html" class="game-card card-div">
-      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M12 32h40" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="15" r="4" fill="currentColor"/><circle cx="32" cy="49" r="4" fill="currentColor"/></svg></div>
+    <a href="divisiones.html" class="game-card card-div" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+      <div class="game-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" fill="rgba(168, 85, 247, 0.15)"/>
+          <!-- Porción compartida -->
+          <path d="M30 28 L48 14 C54 22 55 32 50 40 Z" fill="url(#divGrad1)" stroke="#c084fc" stroke-width="2"/>
+          <path d="M26 32 L44 44 C34 54 18 52 12 40 C6 28 14 16 26 14 Z" fill="url(#divGrad2)" stroke="#a855f7" stroke-width="2"/>
+          <circle cx="28" cy="22" r="4.5" fill="#f43f5e"/>
+          <circle cx="42" cy="24" r="3.5" fill="#f43f5e"/>
+          <circle cx="32" cy="10" r="3" fill="#c084fc"/>
+          <circle cx="32" cy="54" r="3" fill="#c084fc"/>
+          <defs>
+            <linearGradient id="divGrad1" x1="30" y1="14" x2="52" y2="40" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#c084fc"/>
+              <stop offset="1" stop-color="#9333ea"/>
+            </linearGradient>
+            <linearGradient id="divGrad2" x1="10" y1="14" x2="44" y2="52" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#a855f7"/>
+              <stop offset="1" stop-color="#7e22ce"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <div class="game-info">
         <h2>Reparte Justo</h2>
-        <p>Cociente y resto</p>
+        <p>Cociente, resto y reparto fácil</p>
       </div>
+      <div class="card-belt-badge" data-game="div">🥋 Desafío Dojo</div>
     </a>
 
     <!-- Formas geométricas (geometria.html) -->
-    <a href="geometria.html" class="game-card card-formas">
-      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="m32 7 25 45H7z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="32" cy="35" r="9" fill="none" stroke="currentColor" stroke-width="4"/></svg></div>
+    <a href="geometria.html" class="game-card card-formas" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+      <div class="game-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" fill="rgba(236, 72, 153, 0.15)"/>
+          <!-- Cubo isométrico 3D + Esfera -->
+          <path d="M32 14 L46 22 L32 30 L18 22 Z" fill="#f472b6"/>
+          <path d="M18 22 L32 30 V46 L18 38 Z" fill="#db2777"/>
+          <path d="M46 22 L32 30 V46 L46 38 Z" fill="#be185d"/>
+          <circle cx="46" cy="44" r="8" fill="url(#sphereGrad)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"/>
+          <path d="M16 42 L24 48 L14 52 Z" fill="#38bdf8"/>
+          <defs>
+            <linearGradient id="sphereGrad" x1="43" y1="38" x2="49" y2="50" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#fde047"/>
+              <stop offset="1" stop-color="#d97706"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <div class="game-info">
         <h2>Explorador</h2>
-        <p>Figuras, ángulos, áreas y perímetros</p>
+        <p>Cuerpos 3D, figuras, ángulos y áreas</p>
       </div>
+      <div class="card-belt-badge" data-game="geometria">🥋 Desafío Dojo</div>
     </a>
 
-    <a href="leer-numeros.html" class="game-card card-numeros">
-      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M9 13h46v38H9z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M17 25h8m-4-4v17m12-13c0-3 2-5 5-5s5 2 5 5-10 8-10 13h11m4-18h-8l-1 8c1-1 3-2 5-2 3 0 5 2 5 5s-2 6-6 6c-2 0-4-1-5-2" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <!-- Lee Números (leer-numeros.html) -->
+    <a href="leer-numeros.html" class="game-card card-numeros" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+      <div class="game-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" fill="rgba(14, 165, 233, 0.15)"/>
+          <text x="14" y="24" fill="#38bdf8" font-size="14" font-weight="900" font-family="Fredoka">1</text>
+          <text x="36" y="20" fill="#f59e0b" font-size="16" font-weight="900" font-family="Fredoka">2</text>
+          <text x="44" y="38" fill="#ec4899" font-size="15" font-weight="900" font-family="Fredoka">3</text>
+          <!-- Lupa detective con reflejo de lente -->
+          <circle cx="28" cy="34" r="14" fill="rgba(224, 242, 254, 0.3)" stroke="#0ea5e9" stroke-width="3.5"/>
+          <path d="M22 26 C25 23 30 23 34 26" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="39" cy="45" r="3" fill="#f59e0b"/>
+          <path d="M41 47 L52 58" stroke="#0284c7" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="game-info">
         <h2>Lee Números</h2>
-        <p>Lee cifras en voz alta y descubre cómo se escriben</p>
+        <p>Cifras grandes y cómo se escriben</p>
       </div>
+      <div class="card-belt-badge" data-game="numeros">🥋 Desafío Dojo</div>
     </a>
 
     <!-- El Reloj / Tiempo -->
-    <a href="reloj.html" class="game-card card-reloj">
-      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="34" r="24" fill="none" stroke="currentColor" stroke-width="4"/><path d="M32 17v18l12 8M23 5h18" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
+    <a href="reloj.html" class="game-card card-reloj" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+      <div class="game-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" fill="rgba(20, 184, 166, 0.15)"/>
+          <rect x="29" y="6" width="6" height="5" rx="2" fill="#fde047"/>
+          <circle cx="32" cy="7" r="5" stroke="#fde047" stroke-width="2" fill="none"/>
+          <circle cx="32" cy="35" r="21" fill="url(#relojGrad)" stroke="#2dd4bf" stroke-width="2.5"/>
+          <circle cx="32" cy="35" r="17" fill="#134e4a"/>
+          <line x1="32" y1="35" x2="32" y2="23" stroke="#fde047" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="35" x2="41" y2="35" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="32" cy="35" r="2.5" fill="#ffffff"/>
+          <circle cx="15" cy="20" r="1.5" fill="#fde047"/>
+          <circle cx="50" cy="18" r="2" fill="#5eead4"/>
+          <defs>
+            <linearGradient id="relojGrad" x1="11" y1="14" x2="53" y2="56" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#0f766e"/>
+              <stop offset="1" stop-color="#115e59"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <div class="game-info">
         <h2>El Reloj Mágico</h2>
         <p>Lee el reloj y practica las horas</p>
       </div>
+      <div class="card-belt-badge" data-game="reloj">🥋 Desafío Dojo</div>
     </a>
 
-    <!-- Tarjeta Promo al Dojo original para los mayores -->
-    <a href="https://mathlab-phi.vercel.app/" target="_blank" rel="noopener noreferrer" class="game-card promo-card">
-      <div class="game-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M10 19 32 7l22 12H10Zm4 7h36M17 26v25m10-25v25m10-25v25m10-25v25M10 55h44M7 60h50" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <!-- Tarjeta Enlace a Math Universe -->
+    <a href="../Math%20Universe/" class="game-card promo-card" onclick="if(window.DojoAudio) DojoAudio.play('tap')">
+      <div class="game-icon" aria-hidden="true">🌌</div>
       <div class="game-info">
-        <h2 style="color: #3b82f6;">¿Eres mayor?</h2>
-        <p>Visita el <b>Math Dojo</b> para entrenar álgebra, ecuaciones y mucho más.</p>
+        <h2 style="color: #818cf8;">Math Universe</h2>
+        <p>Explora la constelación completa: juegos de física, álgebra y simulaciones.</p>
       </div>
     </a>
   </div>
 
-
   <script>
+    // Sincronizar insignias de progreso en las tarjetas
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.DojoProgress) {
+        const allProgress = DojoProgress.getAll();
+        document.querySelectorAll('.card-belt-badge').forEach(badge => {
+          const gameId = badge.dataset.game;
+          const gameData = allProgress[gameId];
+          if (gameData) {
+            let maxStars = 0;
+            let totalRounds = 0;
+            Object.values(gameData).forEach(b => {
+              if (b.stars > maxStars) maxStars = b.stars;
+              totalRounds += (b.rounds || 0);
+            });
+            if (maxStars > 0) {
+              badge.classList.add('has-stars');
+              badge.textContent = `⭐ ${'⭐'.repeat(maxStars - 1)} · ${totalRounds} rondas`;
+            }
+          }
+        });
+      }
+    });
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('Fallo al registrar SW', err));

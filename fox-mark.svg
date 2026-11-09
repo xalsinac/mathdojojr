@@ -1,7 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
-  <title id="title">Zorrito del Math Dojo</title>
-  <path fill="#f97316" d="M15 15 49 28 64 22l15 6 34-13-8 42c9 14 13 27 9 39-6 19-26 29-50 29s-44-10-50-29c-4-12 0-25 9-39z"/>
-  <path fill="#fff7ed" d="m27 32 19 8-13 22-14-19zm74 0-19 8 13 22 14-19zM34 76c0-13 12-23 30-23s30 10 30 23-12 26-30 26-30-13-30-26"/>
-  <path fill="#1e293b" d="M48 72a5 5 0 1 0 0 10 5 5 0 0 0 0-10m32 0a5 5 0 1 0 0 10 5 5 0 0 0 0-10m-16 13-7 7h14z"/>
-  <path fill="none" stroke="#1e293b" stroke-linecap="round" stroke-width="3" d="M41 88 22 85m20 9-18 2m63-8 19-3m-20 9 18 2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Zorrito Sensei del Math Dojo">
+  <defs>
+    <linearGradient id="foxFur" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+    <linearGradient id="foxEarInner" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffedd5"/>
+      <stop offset="100%" stop-color="#fed7aa"/>
+    </linearGradient>
+    <linearGradient id="foxHeadband" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <filter id="foxShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Sombra base -->
+  <ellipse cx="64" cy="116" rx="36" ry="7" fill="#000" opacity="0.15"/>
+
+  <!-- Orejas exteriores -->
+  <path d="M26 48 L14 14 C28 18 42 28 48 38 Z" fill="#c2410c"/>
+  <path d="M27 46 L18 18 C28 21 39 29 45 38 Z" fill="url(#foxFur)"/>
+  <!-- Interior oreja izquierda -->
+  <path d="M25 40 L22 23 C28 25 35 31 38 37 Z" fill="url(#foxEarInner)"/>
+
+  <path d="M102 48 L114 14 C100 18 86 28 80 38 Z" fill="#c2410c"/>
+  <path d="M101 46 L110 18 C100 21 89 29 83 38 Z" fill="url(#foxFur)"/>
+  <!-- Interior oreja derecha -->
+  <path d="M103 40 L106 23 C100 25 93 31 90 37 Z" fill="url(#foxEarInner)"/>
+
+  <!-- Cabeza Principal (Forma orgánica y suave) -->
+  <path d="M64 28 C34 28 20 48 20 70 C20 88 34 104 64 104 C94 104 108 88 108 70 C108 48 94 28 64 28 Z" fill="url(#foxFur)" filter="url(#foxShadow)"/>
+
+  <!-- Mechones laterales de las mejillas (Zorro) -->
+  <path d="M21 72 C12 75 8 82 14 88 C20 94 30 94 36 90 Z" fill="url(#foxFur)"/>
+  <path d="M107 72 C116 75 120 82 114 88 C108 94 98 94 92 90 Z" fill="url(#foxFur)"/>
+
+  <!-- Mejillas blancas / Hocico inferior -->
+  <path d="M28 74 C24 84 32 98 48 101 C56 103 64 96 64 90 C64 96 72 103 80 101 C96 98 104 84 100 74 C92 64 78 68 64 72 C50 68 36 64 28 74 Z" fill="#fffaf0"/>
+
+  <!-- Cinta de Karate / Hachimaki -->
+  <path d="M21 52 C35 48 64 47 107 52 L106 63 C64 58 35 59 22 63 Z" fill="url(#foxHeadband)"/>
+  <!-- Detalle cinta (bordes y estrella del dojo) -->
+  <circle cx="64" cy="56" r="6" fill="#fef08a"/>
+  <path d="M64 52.5 L65.2 55 L67.8 55.2 L65.8 56.8 L66.4 59.3 L64 58 L61.6 59.3 L62.2 56.8 L60.2 55.2 L62.8 55 Z" fill="#ca8a04"/>
+  <!-- Nudos de la cinta a la izquierda -->
+  <path d="M19 55 C12 50 6 54 8 62 C10 68 18 64 20 59 Z" fill="#dc2626"/>
+  <path d="M18 58 C10 58 5 66 9 73 C12 78 19 72 19 65 Z" fill="#b91c1c"/>
+
+  <!-- Ojos Grandes Expresivos Kawaii -->
+  <!-- Ojo Izquierdo -->
+  <ellipse cx="45" cy="74" rx="7.5" ry="9" fill="#1e1b4b"/>
+  <ellipse cx="43" cy="71" rx="3.2" ry="4" fill="#ffffff"/>
+  <circle cx="48" cy="77" r="1.6" fill="#ffffff"/>
+
+  <!-- Ojo Derecho -->
+  <ellipse cx="83" cy="74" rx="7.5" ry="9" fill="#1e1b4b"/>
+  <ellipse cx="81" cy="71" rx="3.2" ry="4" fill="#ffffff"/>
+  <circle cx="86" cy="77" r="1.6" fill="#ffffff"/>
+
+  <!-- Mejillas sonrosadas / Blush -->
+  <ellipse cx="33" cy="81" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.45"/>
+  <ellipse cx="95" cy="81" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.45"/>
+
+  <!-- Naricita de botón -->
+  <path d="M60 81 C60 78.5 68 78.5 68 81 C68 83.5 64 85.5 64 85.5 C64 85.5 60 83.5 60 81 Z" fill="#1e1b4b"/>
+
+  <!-- Boca sonriente alegre -->
+  <path d="M58 87 Q64 91 70 87" fill="none" stroke="#1e1b4b" stroke-width="2.2" stroke-linecap="round"/>
 </svg>

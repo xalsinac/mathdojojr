@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Ranita Saltarina del Math Dojo">
+  <defs>
+    <linearGradient id="frogSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <linearGradient id="frogHeadband" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="frogShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Sombra base -->
+  <ellipse cx="64" cy="116" rx="36" ry="7" fill="#000" opacity="0.15"/>
+
+  <!-- Globos de los ojos en la parte superior -->
+  <circle cx="38" cy="40" r="22" fill="#15803d"/>
+  <circle cx="38" cy="40" r="20" fill="url(#frogSkin)"/>
+
+  <circle cx="90" cy="40" r="22" fill="#15803d"/>
+  <circle cx="90" cy="40" r="20" fill="url(#frogSkin)"/>
+
+  <!-- Cabeza ancha y amigable de rana -->
+  <ellipse cx="64" cy="74" rx="46" ry="34" fill="url(#frogSkin)" filter="url(#frogShadow)"/>
+
+  <!-- Panza / Barbilla clara -->
+  <ellipse cx="64" cy="85" rx="30" ry="18" fill="#dcfce7"/>
+
+  <!-- Cinta de Karate / Hachimaki dorado -->
+  <path d="M22 62 C40 58 64 57 106 62 L105 72 C64 67 40 68 23 72 Z" fill="url(#frogHeadband)"/>
+  <circle cx="64" cy="65" r="5" fill="#fef08a"/>
+  <!-- Nudo lateral -->
+  <path d="M20 64 C12 60 7 66 10 73 C12 78 19 73 20 68 Z" fill="#d97706"/>
+  <path d="M21 68 C14 69 9 77 13 83 C16 87 22 81 21 74 Z" fill="#b45309"/>
+
+  <!-- Ojos Grandes Expresivos -->
+  <ellipse cx="38" cy="40" rx="14" ry="15" fill="#ffffff"/>
+  <ellipse cx="40" cy="40" rx="8.5" ry="9.5" fill="#1e1b4b"/>
+  <ellipse cx="38" cy="36" rx="4" ry="4.5" fill="#ffffff"/>
+  <circle cx="43" cy="43" r="1.8" fill="#ffffff"/>
+
+  <ellipse cx="90" cy="40" rx="14" ry="15" fill="#ffffff"/>
+  <ellipse cx="88" cy="40" rx="8.5" ry="9.5" fill="#1e1b4b"/>
+  <ellipse cx="86" cy="36" rx="4" ry="4.5" fill="#ffffff"/>
+  <circle cx="91" cy="43" r="1.8" fill="#ffffff"/>
+
+  <!-- Mejillas sonrosadas circulares -->
+  <ellipse cx="28" cy="81" rx="6.5" ry="4.5" fill="#f43f5e" opacity="0.45"/>
+  <ellipse cx="100" cy="81" rx="6.5" ry="4.5" fill="#f43f5e" opacity="0.45"/>
+
+  <!-- Orificios nasales kawaii -->
+  <circle cx="60" cy="76" r="1.5" fill="#15803d"/>
+  <circle cx="68" cy="76" r="1.5" fill="#15803d"/>
+
+  <!-- Boca feliz y sonriente con lengua -->
+  <path d="M42 83 Q64 102 86 83" fill="#1e1b4b"/>
+  <path d="M54 92 C54 88 74 88 74 92 C74 97 64 100 54 92 Z" fill="#f43f5e"/>
+</svg>

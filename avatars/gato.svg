@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Gatito Ninja del Math Dojo">
+  <defs>
+    <linearGradient id="catFur" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="catEarInner" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbcfe8"/>
+      <stop offset="100%" stop-color="#f472b6"/>
+    </linearGradient>
+    <linearGradient id="catHeadband" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <filter id="catShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Sombra base -->
+  <ellipse cx="64" cy="116" rx="36" ry="7" fill="#000" opacity="0.15"/>
+
+  <!-- Orejas de gato -->
+  <path d="M26 50 L18 16 C30 20 44 32 48 42 Z" fill="#3730a3"/>
+  <path d="M28 47 L22 20 C30 23 41 32 46 41 Z" fill="url(#catFur)"/>
+  <path d="M28 41 L25 27 C31 28 37 34 39 40 Z" fill="url(#catEarInner)"/>
+
+  <path d="M102 50 L110 16 C98 20 84 32 80 42 Z" fill="#3730a3"/>
+  <path d="M100 47 L106 20 C98 23 87 32 82 41 Z" fill="url(#catFur)"/>
+  <path d="M100 41 L103 27 C97 28 91 34 89 40 Z" fill="url(#catEarInner)"/>
+
+  <!-- Cabeza Principal redondeada -->
+  <path d="M64 30 C34 30 22 48 22 70 C22 92 36 104 64 104 C92 104 106 92 106 70 C106 48 94 30 64 30 Z" fill="url(#catFur)" filter="url(#catShadow)"/>
+
+  <!-- Hocico blanco redondeado -->
+  <ellipse cx="56" cy="86" rx="9" ry="7" fill="#ffffff"/>
+  <ellipse cx="72" cy="86" rx="9" ry="7" fill="#ffffff"/>
+
+  <!-- Cinta de Ninja / Hachimaki azul -->
+  <path d="M22 53 C38 49 64 48 106 53 L105 64 C64 59 38 60 23 64 Z" fill="url(#catHeadband)"/>
+  <circle cx="64" cy="57" r="5.5" fill="#ffffff"/>
+  <circle cx="64" cy="57" r="3.2" fill="#38bdf8"/>
+  <!-- Nudo lateral -->
+  <path d="M104 56 C112 51 118 55 116 63 C114 69 106 65 104 60 Z" fill="#0284c7"/>
+  <path d="M105 59 C113 59 118 67 114 74 C111 79 104 73 104 66 Z" fill="#0369a1"/>
+
+  <!-- Ojos Grandes de Gato (Verde Esmeralda brillante) -->
+  <ellipse cx="44" cy="73" rx="8" ry="9.5" fill="#059669"/>
+  <ellipse cx="44" cy="73" rx="6" ry="8.5" fill="#047857"/>
+  <ellipse cx="42" cy="70" rx="3.5" ry="4.5" fill="#ffffff"/>
+  <circle cx="47" cy="76" r="1.8" fill="#ffffff"/>
+
+  <ellipse cx="84" cy="73" rx="8" ry="9.5" fill="#059669"/>
+  <ellipse cx="84" cy="73" rx="6" ry="8.5" fill="#047857"/>
+  <ellipse cx="82" cy="70" rx="3.5" ry="4.5" fill="#ffffff"/>
+  <circle cx="87" cy="76" r="1.8" fill="#ffffff"/>
+
+  <!-- Mejillas sonrosadas -->
+  <ellipse cx="32" cy="81" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.4"/>
+  <ellipse cx="96" cy="81" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.4"/>
+
+  <!-- Naricita rosa -->
+  <polygon points="64,83 60,78 68,78" fill="#f472b6"/>
+
+  <!-- Bigotes dinámicos -->
+  <path d="M18 78 Q28 80 34 82" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.8"/>
+  <path d="M17 87 Q27 86 34 85" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.8"/>
+  <path d="M110 78 Q100 80 94 82" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.8"/>
+  <path d="M111 87 Q101 86 94 85" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.8"/>
+
+  <!-- Boca de gato :3 -->
+  <path d="M57 86 Q64 90 64 83 Q64 90 71 86" fill="none" stroke="#312e81" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

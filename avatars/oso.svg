@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Osito Guerrero del Math Dojo">
+  <defs>
+    <linearGradient id="bearFur" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    <linearGradient id="bearEarInner" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+    <linearGradient id="bearHeadband" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+    <filter id="bearShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Sombra base -->
+  <ellipse cx="64" cy="116" rx="36" ry="7" fill="#000" opacity="0.15"/>
+
+  <!-- Orejas redondas de oso -->
+  <circle cx="32" cy="38" r="18" fill="#78350f"/>
+  <circle cx="32" cy="38" r="16" fill="url(#bearFur)"/>
+  <circle cx="32" cy="38" r="9" fill="url(#bearEarInner)"/>
+
+  <circle cx="96" cy="38" r="18" fill="#78350f"/>
+  <circle cx="96" cy="38" r="16" fill="url(#bearFur)"/>
+  <circle cx="96" cy="38" r="9" fill="url(#bearEarInner)"/>
+
+  <!-- Cabeza Principal de Oso -->
+  <path d="M64 30 C32 30 20 48 20 72 C20 92 34 104 64 104 C94 104 108 92 108 72 C108 48 96 30 64 30 Z" fill="url(#bearFur)" filter="url(#bearShadow)"/>
+
+  <!-- Cinta de Karate / Hachimaki roja -->
+  <path d="M21 54 C38 50 64 49 107 54 L106 65 C64 60 38 61 22 65 Z" fill="url(#bearHeadband)"/>
+  <circle cx="64" cy="58" r="5" fill="#fef08a"/>
+  <!-- Nudo lateral de la cinta -->
+  <path d="M20 57 C12 52 6 58 9 65 C11 70 19 66 21 61 Z" fill="#b91c1c"/>
+  <path d="M19 61 C11 62 6 70 10 76 C13 80 20 74 20 67 Z" fill="#991b1b"/>
+
+  <!-- Hocico grande y tierno de oso -->
+  <ellipse cx="64" cy="85" rx="20" ry="15" fill="#fef3c7"/>
+
+  <!-- Ojos Grandes Expresivos -->
+  <ellipse cx="44" cy="73" rx="7.5" ry="9" fill="#1e1b4b"/>
+  <ellipse cx="42" cy="70" rx="3.2" ry="4" fill="#ffffff"/>
+  <circle cx="47" cy="76" r="1.6" fill="#ffffff"/>
+
+  <ellipse cx="84" cy="73" rx="7.5" ry="9" fill="#1e1b4b"/>
+  <ellipse cx="82" cy="70" rx="3.2" ry="4" fill="#ffffff"/>
+  <circle cx="87" cy="76" r="1.6" fill="#ffffff"/>
+
+  <!-- Mejillas sonrosadas -->
+  <ellipse cx="32" cy="81" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.4"/>
+  <ellipse cx="96" cy="81" rx="5.5" ry="3.5" fill="#f43f5e" opacity="0.4"/>
+
+  <!-- Gran nariz de oso en forma de triángulo redondeado -->
+  <path d="M57 77 C57 74 71 74 71 77 C71 82 64 85 64 85 C64 85 57 82 57 77 Z" fill="#451a03"/>
+  <ellipse cx="62" cy="77" rx="2.5" ry="1.2" fill="#78350f"/>
+
+  <!-- Sonrisa afable de osito -->
+  <path d="M64 85 L64 88 M58 88 Q64 94 70 88" fill="none" stroke="#451a03" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

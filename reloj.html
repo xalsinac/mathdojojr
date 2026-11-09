@@ -13,14 +13,17 @@
     }
   </script>
   <link rel="stylesheet" href="ui.css">
+  <script src="dojo-audio.js" defer></script>
+  <script src="dojo-fx.js" defer></script>
+  <script src="dojo-progress.js" defer></script>
   <script src="accessibility.js" defer></script>
   <script src="theme.js" defer></script>
   <script src="practice-guide.js" defer></script>
   <script src="practice-help.js" defer></script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>El Reloj Mágico | Math Dojo Junior</title>
-  <meta name="theme-color" content="#0f172a">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>El Reloj Mágico | Math Dojo Junior ⏰</title>
+  <meta name="theme-color" content="#101116">
   
   <style>
     :root {
@@ -48,7 +51,7 @@
       --belt-negro: #1e293b;
     }
     
-    * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif; }
+    * { box-sizing: border-box; font-family: var(--font-kids); }
     
     html, body {
       margin: 0; padding: 0;
@@ -251,9 +254,14 @@
 <body>
   <div class="top-nav">
     <a href="index.html" class="btn-nav">⬅️ Inicio</a>
-    <button class="btn-nav" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
-      <span id="theme-icon">☀️</span>
-    </button>
+    <div class="top-nav-group">
+      <button class="sound-toggle-btn" type="button" onclick="DojoAudio.toggleMute()" aria-label="Silenciar o activar sonido" title="Sonido">
+        <span class="sound-icon">🔊</span>
+      </button>
+      <button class="theme-toggle-btn" type="button" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema de color">
+        <span id="theme-icon">☀️</span>
+      </button>
+    </div>
   </div>
 
   <div class="header">
@@ -263,16 +271,69 @@
 
   <div class="level-selector" id="level-selector">
     <button class="belt-btn" data-level="blanco">
-      <span class="belt-text">Cinturón Blanco <span class="belt-desc">Solo horas en punto</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Blanco</span>
+        <span class="belt-desc">Solo horas en punto (la aguja larga en el 12)</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="blanco">🥋</div>
     </button>
     <button class="belt-btn" data-level="naranja">
-      <span class="belt-text">Cinturón Naranja <span class="belt-desc">Horas y minutos (de 5 en 5)</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#f97316" stroke="#ea580c" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#f97316" stroke="#ea580c" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Naranja</span>
+        <span class="belt-desc">Horas y minutos (de 5 en 5 minutos)</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="naranja">🥋</div>
     </button>
     <button class="belt-btn" data-level="azul">
-      <span class="belt-text">Cinturón Azul <span class="belt-desc">Mueve las agujas o usa las flechas del teclado</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#0ea5e9" stroke="#0284c7" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#0ea5e9" stroke="#0284c7" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#0ea5e9" stroke="#0284c7" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#0ea5e9" stroke="#0284c7" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Azul</span>
+        <span class="belt-desc">Mueve las agujas del reloj interactivo</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="azul">🥋</div>
     </button>
     <button class="belt-btn" data-level="negro">
-      <span class="belt-text">Cinturón Negro <span class="belt-desc">La hora en catalán: los cuartos van hacia la hora siguiente</span></span>
+      <div class="belt-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="10" rx="3" fill="#1e1b4b" stroke="#4338ca" stroke-width="2"/>
+          <rect x="6" y="24" width="36" height="10" rx="3" fill="#1e1b4b" stroke="#4338ca" stroke-width="2"/>
+          <circle cx="24" cy="22" r="7" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+          <path d="M21 28 L17 42 L25 40 Z" fill="#1e1b4b" stroke="#4338ca" stroke-width="1.5"/>
+          <path d="M27 28 L31 42 L23 40 Z" fill="#1e1b4b" stroke="#4338ca" stroke-width="1.5"/>
+          <rect x="18" y="37" width="6" height="2" fill="#fbbf24"/>
+        </svg>
+      </div>
+      <div class="belt-text">
+        <span class="belt-title">Cinturón Negro</span>
+        <span class="belt-desc">La hora en catalán: cuartos hacia la hora siguiente</span>
+      </div>
+      <div class="belt-badge-stars" data-belt="negro">🥋</div>
     </button>
   </div>
 
@@ -600,6 +661,7 @@
 
     function pressKey(num) {
       if (isWaiting || !focusedInput) return;
+      if (window.DojoAudio) DojoAudio.play('tap');
       let id = focusedInput.dataset.id;
       
       if (inputValues[id].length < 2) {
@@ -687,7 +749,9 @@
 
     function successEffect() {
       score++; streak++; updateScore();
-      feedbackEl.textContent = '¡A tiempo! ⏰'; feedbackEl.className = 'feedback correct';
+      feedbackEl.textContent = '¡A tiempo! ⏰✨'; feedbackEl.className = 'feedback correct';
+      if (window.DojoAudio) DojoAudio.play('correct');
+      if (window.DojoFX) DojoFX.confetti(1200);
       document.body.classList.add('flash-active');
       const rect = document.getElementById('clock-container').getBoundingClientRect();
       createExplosion(rect.left + rect.width/2, rect.top + rect.height/2);
@@ -697,6 +761,7 @@
     function failEffect() {
       streak = 0; updateScore();
       feedbackEl.textContent = '¡Reloj roto! 💥'; feedbackEl.className = 'feedback wrong';
+      if (window.DojoAudio) DojoAudio.play('wrong');
       document.body.classList.add('error-active');
       setTimeout(() => document.body.classList.remove('error-active'), 500);
     }
